@@ -68,6 +68,25 @@ export default function DayDetail({ day }: DayDetailProps) {
         </div>
       )}
 
+      {/* Step-by-step itinerary */}
+      {day.itinerary && day.itinerary.length > 0 && (
+        <div className="rounded-xl bg-white border border-stone-200 p-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock mb-3">
+            Étape par étape
+          </p>
+          <ol className="space-y-2.5">
+            {day.itinerary.map((step, i) => (
+              <li key={i} className="flex gap-3">
+                <span className="shrink-0 flex items-center justify-center w-5 h-5 mt-0.5 rounded-full bg-pine/10 text-pine text-[11px] font-bold tabular-nums">
+                  {i + 1}
+                </span>
+                <p className="text-sm text-stone-600 leading-relaxed">{step}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
       {/* 2-column highlights */}
       <div className="grid sm:grid-cols-2 gap-4">
         {/* Must see — pine border */}

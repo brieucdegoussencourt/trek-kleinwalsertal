@@ -37,6 +37,7 @@ export interface TrekDay {
   via?: string;
   stats: DayStats;
   difficulty: "moderate" | "sustained" | "easy" | "hard";
+  itinerary: string[];
   mustSee: DayHighlight[];
   bonusTips: DayHighlight[];
   practicalInfo?: string;
@@ -109,6 +110,13 @@ export const TREK_DAYS: TrekDay[] = [
       altitudeNightM: 2070,
     },
     difficulty: "moderate",
+    itinerary: [
+      "Montée en télécabine Kanzelwandbahn depuis Riezlern jusqu'à la station supérieure (~1 957 m).",
+      "Courte ascension jusqu'au sommet de la Kanzelwand (2 058 m) pour le panorama à 360°.",
+      "Traversée du versant allemand (Allgäu) : alternance de courtes montées et descentes le long des crêtes.",
+      "Progression vers l'ouest en direction du Fiderepass, sous les parois des Kanzelwand-Köpfe.",
+      "Arrivée à la Fiderepasshütte (2 070 m), perchée sur le col — installation et coucher de soleil.",
+    ],
     mustSee: [
       {
         title: "Panorama de la Kanzelwand",
@@ -161,6 +169,14 @@ export const TREK_DAYS: TrekDay[] = [
       altitudeNightM: 2009,
     },
     difficulty: "sustained",
+    itinerary: [
+      "Départ tôt (avant 7h30) depuis la Fiderepasshütte, montée vers l'est jusqu'à la Fiderescharte — passages câblés / mains courantes.",
+      "Descente rocheuse en serpentins par le Saubuckel vers la Taufersbergalpe (non gardée).",
+      "Bascule sur le Krumbacher Höhenweg : sentier de balcon sans grosse dénivellation, sous les parois de la via ferrata.",
+      "Halte à la Mindelheimer Hütte (2 013 m), à mi-parcours — pause bienvenue.",
+      "Continuation par le Geißhornjoch (1 982 m) puis le Gemstelpass (1 971 m).",
+      "Courte montée d'environ 200 m sous le Geißhorn, puis descente facile jusqu'à la Widdersteinhütte (2 009 m).",
+    ],
     mustSee: [
       {
         title: "Fiderepassscharte en début d'étape",
@@ -212,6 +228,14 @@ export const TREK_DAYS: TrekDay[] = [
       altitudeNightM: 1086,
     },
     difficulty: "easy",
+    itinerary: [
+      "Descente courte mais raide depuis la Widdersteinhütte vers le Hochalppass.",
+      "Basculement dans la Bärguntal (Bargunttal), vallée sauvage et préservée.",
+      "Passage par la Bärgunthütte, puis descente régulière le long du torrent.",
+      "Arrivée à Baad (1 244 m), hameau le plus haut de la vallée.",
+      "WalserBus Ligne 1 : Baad → Hirschegg (~20–25 min), gratuit avec la Gästekarte.",
+      "Check-in à l'A-ROSA Ifen Hotel (1 086 m) — après-midi spa bien mérité.",
+    ],
     mustSee: [
       {
         title: "Descente de la Bargunttal",
@@ -263,6 +287,15 @@ export const TREK_DAYS: TrekDay[] = [
       altitudeNightM: 1086,
     },
     difficulty: "sustained",
+    itinerary: [
+      "Rejoindre l'Auenhütte (station vallée de l'Ifenbahn) depuis Hirschegg.",
+      "Astuce genoux : Ifenbahn jusqu'à la station intermédiaire / Ifenhütte (économise ~600 m de montée), sinon montée à pied par la forêt.",
+      "Montée en serpentins dans le cirque de l'Ifen, le long des parois plongeantes du plateau, jusqu'à la Hahnenköpfle (~2 085 m).",
+      "Traversée du Gottesackerplateau : lapiaz, dolines et gouffres — suivre attentivement le balisage (bonne visibilité indispensable).",
+      "Passage par les ruines de la Gottesackeralpe (~1 835 m).",
+      "Descente par le Mahdtal, devant l'entrée béante du Hölloch (gouffre de 80 m).",
+      "Sortie à Wälde / Hirschegg, puis retour à Riezlern (WalserBus ou à pied le long de la Schwarzwasserbach).",
+    ],
     mustSee: [
       {
         title: "Gottesackerplateau",
