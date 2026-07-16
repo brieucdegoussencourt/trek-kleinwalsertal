@@ -74,12 +74,6 @@ export interface TrekSummary {
   days: number;
 }
 
-export interface ChecklistItem {
-  label: string;
-  url?: string;
-  note?: string;
-}
-
 export interface GearItem {
   label: string;
   priority: "essential" | "recommended";
@@ -377,46 +371,6 @@ export const TREK_DAYS: TrekDay[] = [
       altitudeM: 1086,
       capacity: "Retour à la base",
     },
-  },
-];
-
-// ─── Checklist ───────────────────────────────────────────────
-
-export const CHECKLIST: ChecklistItem[] = [
-  {
-    label: "Réserver Fiderepasshütte",
-    url: "https://www.fiderepasshuette.de",
-    note: "Très demandé en juillet — réserver dès maintenant",
-  },
-  {
-    label: "Réserver Widdersteinütte",
-    url: "https://www.kleinwalsertal.com",
-  },
-  {
-    label: "Réserver A-ROSA Ifen Hotel Hirschegg",
-    url: "https://www.arosahotels.co.uk",
-    note: "Réserver la Suite SPA Privée en même temps",
-  },
-  {
-    label: "Réserver hotel Riezlern (Jour 0 + Jour 4)",
-  },
-  {
-    label: "Vérifier Kanzelwandbahn",
-    url: "https://www.kanzelwandbahn.de",
-    note: "Ouvert en juillet — ~17 EUR/pers aller",
-  },
-  {
-    label: "Vérifier Ifenbahn (Jour 4)",
-    url: "https://www.ok-bergbahnen.com",
-  },
-  {
-    label: "Météo quotidienne",
-    url: "https://www.meteo.at",
-    note: "Aussi mountain-forecast.com par sommet",
-  },
-  {
-    label: "Prévoir espèces",
-    note: "Min. 150 EUR/pers — Fiderepasshütte CASH uniquement",
   },
 ];
 
