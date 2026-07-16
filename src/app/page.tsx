@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { TREK_DAYS } from "@/data/trek";
 import Nav, { type Tab } from "@/components/Nav";
 import Hero from "@/components/Hero";
@@ -9,6 +10,14 @@ import DayDetail from "@/components/DayDetail";
 import SummaryTable from "@/components/SummaryTable";
 import Checklist from "@/components/Checklist";
 import Footer from "@/components/Footer";
+
+// Leaflet touches `window`, so load the map client-side only.
+const TrekMap = dynamic(() => import("@/components/TrekMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[360px] sm:h-[440px] w-full rounded-2xl bg-stone-100 animate-pulse" />
+  ),
+});
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "itineraire",    label: "Itinéraire"    },
@@ -64,6 +73,19 @@ export default function Home() {
                   onClick={() => setSelectedDay(day.dayNumber)}
                 />
               ))}
+            </div>
+
+            {/* Interactive map */}
+            <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-sm">
+              <div className="flex items-baseline justify-between px-1 pb-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+                  Carte du parcours · Jour {selectedDay}
+                </p>
+                <p className="text-[11px] text-stone-400">
+                  Touchez une étape sur la carte pour la sélectionner
+                </p>
+              </div>
+              <TrekMap selectedDay={selectedDay} onSelectDay={setSelectedDay} />
             </div>
 
             {/* Detail panel — key forces remount → triggers animation */}

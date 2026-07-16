@@ -27,6 +27,25 @@ export interface DayHighlight {
   description: string;
 }
 
+export type WaypointKind =
+  | "start"
+  | "hut"
+  | "pass"
+  | "peak"
+  | "village"
+  | "poi"
+  | "transfer";
+
+export interface Waypoint {
+  name: string;
+  /** [latitude, longitude] in decimal degrees (WGS84). */
+  coord: [number, number];
+  altitudeM?: number;
+  kind: WaypointKind;
+  /** Reached by bus/lift rather than on foot — rendered as a dashed leg. */
+  transfer?: boolean;
+}
+
 export interface TrekDay {
   dayNumber: number;
   date: string;
@@ -38,6 +57,7 @@ export interface TrekDay {
   stats: DayStats;
   difficulty: "moderate" | "sustained" | "easy" | "hard";
   itinerary: string[];
+  waypoints: Waypoint[];
   mustSee: DayHighlight[];
   bonusTips: DayHighlight[];
   practicalInfo?: string;
@@ -83,10 +103,10 @@ export const TREK_META = {
 // ─── Summary ─────────────────────────────────────────────────
 
 export const TREK_SUMMARY: TrekSummary = {
-  totalKm: 39.5,
-  totalElevationGainM: 2500,
-  totalElevationLossM: 3050,
-  totalHikingHours: "~17h",
+  totalKm: 41.9,
+  totalElevationGainM: 2770,
+  totalElevationLossM: 3620,
+  totalHikingHours: "~18h",
   nights: 3,
   days: 4,
 };
@@ -99,23 +119,30 @@ export const TREK_DAYS: TrekDay[] = [
     date: "Mardi 21 juillet",
     dateShort: "Mar. 21 juil.",
     label: "Mise en jambes panoramique",
-    from: "Kanzelwand",
+    from: "Riezlern",
     to: "Fiderepasshütte",
     stats: {
-      distanceKm: 7.5,
-      elevationGainM: 550,
-      elevationLossM: 250,
-      durationMin: "3h00",
-      durationMax: "3h30",
+      distanceKm: 9.5,
+      elevationGainM: 1440,
+      elevationLossM: 460,
+      durationMin: "5h00",
+      durationMax: "6h00",
       altitudeNightM: 2070,
     },
-    difficulty: "moderate",
+    difficulty: "sustained",
     itinerary: [
-      "Montée en télécabine Kanzelwandbahn depuis Riezlern jusqu'à la station supérieure (~1 957 m).",
+      "Départ à pied de Riezlern, station-vallée de la Kanzelwandbahn (1 087 m).",
+      "Longue montée régulière par les pistes et sentiers jusqu'à la station supérieure de la Kanzelwand (~1 957 m).",
       "Courte ascension jusqu'au sommet de la Kanzelwand (2 058 m) pour le panorama à 360°.",
       "Traversée du versant allemand (Allgäu) : alternance de courtes montées et descentes le long des crêtes.",
       "Progression vers l'ouest en direction du Fiderepass, sous les parois des Kanzelwand-Köpfe.",
       "Arrivée à la Fiderepasshütte (2 070 m), perchée sur le col — installation et coucher de soleil.",
+    ],
+    waypoints: [
+      { name: "Riezlern · Kanzelwandbahn (vallée)", coord: [47.35584, 10.18486], altitudeM: 1087, kind: "start" },
+      { name: "Kanzelwand · station supérieure",    coord: [47.33767, 10.20123], altitudeM: 1957, kind: "poi" },
+      { name: "Sommet de la Kanzelwand",            coord: [47.33478, 10.20770], altitudeM: 2058, kind: "peak" },
+      { name: "Fiderepasshütte",                    coord: [47.31561, 10.21244], altitudeM: 2070, kind: "hut" },
     ],
     mustSee: [
       {
@@ -142,7 +169,7 @@ export const TREK_DAYS: TrekDay[] = [
       },
     ],
     practicalInfo:
-      "Réservation sur fiderepasshuette.de — indispensable en juillet. Paiement ESPÈCES uniquement. Prévoir 80–90 EUR/pers demi-pension. Accès facilité par la Kanzelwandbahn (~17 EUR/pers aller), sinon +7 km / +850 m / +2h30 à pied.",
+      "Étape en montée intégrale à pied depuis la vallée (1 087 m → 2 070 m). Pour raccourcir : la Kanzelwandbahn (~17 EUR/pers aller) monte à la station supérieure et ramène l'étape à ~4 km / +580 m. Réservation Fiderepasshütte sur fiderepasshuette.de — indispensable en juillet. Paiement ESPÈCES uniquement. Prévoir 80–90 EUR/pers demi-pension.",
     accommodation: {
       name: "Fiderepasshütte",
       type: "refuge-dav",
@@ -161,9 +188,9 @@ export const TREK_DAYS: TrekDay[] = [
     from: "Fiderepasshütte",
     to: "Widdersteinütte",
     stats: {
-      distanceKm: 12,
-      elevationGainM: 850,
-      elevationLossM: 800,
+      distanceKm: 11.6,
+      elevationGainM: 890,
+      elevationLossM: 950,
       durationMin: "5h30",
       durationMax: "6h00",
       altitudeNightM: 2009,
@@ -176,6 +203,13 @@ export const TREK_DAYS: TrekDay[] = [
       "Halte à la Mindelheimer Hütte (2 013 m), à mi-parcours — pause bienvenue.",
       "Continuation par le Geißhornjoch (1 982 m) puis le Gemstelpass (1 971 m).",
       "Courte montée d'environ 200 m sous le Geißhorn, puis descente facile jusqu'à la Widdersteinhütte (2 009 m).",
+    ],
+    waypoints: [
+      { name: "Fiderepasshütte",     coord: [47.31561, 10.21244], altitudeM: 2070, kind: "start" },
+      { name: "Fiderescharte",       coord: [47.31386, 10.22016], altitudeM: 2200, kind: "pass" },
+      { name: "Mindelheimer Hütte",  coord: [47.29233, 10.19490], altitudeM: 2013, kind: "hut" },
+      { name: "Gemstelpass",         coord: [47.27817, 10.14288], altitudeM: 1971, kind: "pass" },
+      { name: "Widdersteinhütte",    coord: [47.27851, 10.13688], altitudeM: 2009, kind: "hut" },
     ],
     mustSee: [
       {
@@ -220,9 +254,9 @@ export const TREK_DAYS: TrekDay[] = [
     to: "Hirschegg",
     via: "Baad",
     stats: {
-      distanceKm: 6.5,
-      elevationGainM: 50,
-      elevationLossM: 800,
+      distanceKm: 7.6,
+      elevationGainM: 60,
+      elevationLossM: 840,
       durationMin: "2h15",
       durationMax: "2h45",
       altitudeNightM: 1086,
@@ -235,6 +269,13 @@ export const TREK_DAYS: TrekDay[] = [
       "Arrivée à Baad (1 244 m), hameau le plus haut de la vallée.",
       "WalserBus Ligne 1 : Baad → Hirschegg (~20–25 min), gratuit avec la Gästekarte.",
       "Check-in à l'A-ROSA Ifen Hotel (1 086 m) — après-midi spa bien mérité.",
+    ],
+    waypoints: [
+      { name: "Widdersteinhütte",       coord: [47.27851, 10.13688], altitudeM: 2009, kind: "start" },
+      { name: "Hochalppass",            coord: [47.27594, 10.11491], altitudeM: 1935, kind: "pass" },
+      { name: "Bärgunthütte",           coord: [47.29277, 10.11403], altitudeM: 1408, kind: "hut" },
+      { name: "Baad",                   coord: [47.31035, 10.12128], altitudeM: 1244, kind: "village" },
+      { name: "Hirschegg · A-ROSA Ifen", coord: [47.34860, 10.17000], altitudeM: 1086, kind: "transfer", transfer: true },
     ],
     mustSee: [
       {
@@ -279,22 +320,30 @@ export const TREK_DAYS: TrekDay[] = [
     to: "Riezlern",
     via: "Gottesackerplateau",
     stats: {
-      distanceKm: 13.5,
-      elevationGainM: 1050,
-      elevationLossM: 1200,
-      durationMin: "5h30",
-      durationMax: "6h00",
+      distanceKm: 13.2,
+      elevationGainM: 380,
+      elevationLossM: 1370,
+      durationMin: "4h00",
+      durationMax: "5h00",
       altitudeNightM: 1086,
     },
     difficulty: "sustained",
     itinerary: [
       "Rejoindre l'Auenhütte (station vallée de l'Ifenbahn) depuis Hirschegg.",
-      "Astuce genoux : Ifenbahn jusqu'à la station intermédiaire / Ifenhütte (économise ~600 m de montée), sinon montée à pied par la forêt.",
-      "Montée en serpentins dans le cirque de l'Ifen, le long des parois plongeantes du plateau, jusqu'à la Hahnenköpfle (~2 085 m).",
+      "Montée en Ifenbahn jusqu'à la station supérieure Ifen II (~2 030 m) — évite ~750 m de grimpe.",
+      "Courte montée à la Hahnenköpfle (~2 085 m) : panorama à 360° sur le Kleinwalsertal et le Bregenzerwald.",
       "Traversée du Gottesackerplateau : lapiaz, dolines et gouffres — suivre attentivement le balisage (bonne visibilité indispensable).",
       "Passage par les ruines de la Gottesackeralpe (~1 835 m).",
       "Descente par le Mahdtal, devant l'entrée béante du Hölloch (gouffre de 80 m).",
       "Sortie à Wälde / Hirschegg, puis retour à Riezlern (WalserBus ou à pied le long de la Schwarzwasserbach).",
+    ],
+    waypoints: [
+      { name: "Auenhütte · Ifenbahn",   coord: [47.34292, 10.13698], altitudeM: 1280, kind: "start" },
+      { name: "Hahnenköpfle",           coord: [47.35791, 10.10226], altitudeM: 2085, kind: "peak", transfer: true },
+      { name: "Gottesackerplateau",     coord: [47.36433, 10.10002], altitudeM: 1900, kind: "poi" },
+      { name: "Gottesackeralpe",        coord: [47.37210, 10.11130], altitudeM: 1835, kind: "poi" },
+      { name: "Hölloch",                coord: [47.37785, 10.15040], altitudeM: 1180, kind: "poi" },
+      { name: "Riezlern",               coord: [47.35936, 10.18833], altitudeM: 1086, kind: "village" },
     ],
     mustSee: [
       {
@@ -321,7 +370,7 @@ export const TREK_DAYS: TrekDay[] = [
       },
     ],
     practicalInfo:
-      "Astuce genoux : Ifenbahn depuis l'Auenhütte pour économiser la montée initiale de 600m. Ramène l'étape à 9,5 km et +450m D+. Très recommandé après 3 jours de trek. Vérifier horaires sur ok-bergbahnen.com.",
+      "Version par défaut : Ifenbahn depuis l'Auenhütte jusqu'à Ifen II (~2 030 m) — vivement recommandé après 3 jours de trek. Puriste ? Montée intégrale à pied : +17,4 km / +1 180 m / ~7 h. Aucun point d'eau ni ravitaillement sur le plateau : prévoir eau + en-cas. Horaires Ifenbahn sur ok-bergbahnen.com.",
     accommodation: {
       name: "Hotel Riezlern",
       type: "hotel",
