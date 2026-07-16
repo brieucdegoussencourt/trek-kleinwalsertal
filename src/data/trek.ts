@@ -439,6 +439,138 @@ export const GEAR: GearItem[] = [
   { label: "Tenue légère pour le spa A-ROSA", priority: "recommended" },
 ];
 
+// ─── Weather ─────────────────────────────────────────────────
+
+export interface WeatherSpot {
+  dayNumber: number;
+  /** Trek date, ISO YYYY-MM-DD — drives the Open-Meteo request. */
+  dateIso: string;
+  /** Point haut de l'étape — le plus pertinent pour la météo de rando. */
+  name: string;
+  coord: [number, number];
+  altitudeM: number;
+}
+
+export const WEATHER_SPOTS: WeatherSpot[] = [
+  { dayNumber: 1, dateIso: "2026-07-21", name: "Kanzelwand",       coord: [47.33478, 10.20770], altitudeM: 2058 },
+  { dayNumber: 2, dateIso: "2026-07-22", name: "Fiderescharte",    coord: [47.31386, 10.22016], altitudeM: 2200 },
+  { dayNumber: 3, dateIso: "2026-07-23", name: "Widdersteinhütte", coord: [47.27851, 10.13688], altitudeM: 2009 },
+  { dayNumber: 4, dateIso: "2026-07-24", name: "Hahnenköpfle",     coord: [47.35791, 10.10226], altitudeM: 2085 },
+];
+
+export const WEATHER_LINKS = [
+  {
+    label: "Mountain-Forecast · Kanzelwand",
+    url: "https://www.mountain-forecast.com/peaks/Kanzelwand",
+    note: "Prévisions par sommet et par altitude",
+  },
+  {
+    label: "Bergfex · Météo Kleinwalsertal",
+    url: "https://www.bergfex.com/sommer/kleinwalsertal/wetter/",
+    note: "Bulletin de la vallée + webcams",
+  },
+  {
+    label: "GeoSphere Austria (meteo.at)",
+    url: "https://www.meteo.at",
+    note: "Service météo officiel autrichien",
+  },
+] as const;
+
+// ─── Safety ──────────────────────────────────────────────────
+
+export interface SafetyTip {
+  title: string;
+  description: string;
+}
+
+export interface SafetySection {
+  title: string;
+  icon: string;
+  tips: SafetyTip[];
+}
+
+export const EMERGENCY_NUMBERS = [
+  { number: "140", label: "Secours alpin · Autriche" },
+  { number: "144", label: "Urgences · Vorarlberg" },
+  { number: "112", label: "Numéro d'urgence européen" },
+] as const;
+
+export const SAFETY_SECTIONS: SafetySection[] = [
+  {
+    title: "Avant de partir",
+    icon: "🥾",
+    tips: [
+      {
+        title: "Rythme & acclimatation",
+        description:
+          "Commencez doucement : le corps a besoin de s'adapter à l'altitude et à l'effort. Les premiers jours, adoptez un rythme plus lent que d'habitude.",
+      },
+      {
+        title: "Préparez votre itinéraire",
+        description:
+          "Cartes et topos en main, choisissez des sentiers adaptés à la saison et à votre condition physique. Les traces GPX offline (Komoot / AllTrails) sont vos amies.",
+      },
+      {
+        title: "Prévenez votre hébergement",
+        description:
+          "Indiquez chaque matin votre itinéraire et l'heure d'arrivée prévue au refuge suivant — et signalez tout retard. C'est le filet de sécurité classique en montagne.",
+      },
+      {
+        title: "Restez sur les sentiers balisés",
+        description:
+          "Prudence particulière sur les névés raides et les pentes herbeuses glissantes après la pluie. Ne coupez jamais les lacets.",
+      },
+    ],
+  },
+  {
+    title: "Météo en montagne",
+    icon: "🌦️",
+    tips: [
+      {
+        title: "Surveillez l'évolution en journée",
+        description:
+          "Orages d'été et fronts froids arrivent souvent l'après-midi : partez tôt, visez les passages exposés (Fiderescharte, Gottesackerplateau) avant midi.",
+      },
+      {
+        title: "−1 °C tous les 100 m",
+        description:
+          "Par beau temps, la température baisse d'environ 1 °C par 100 m d'altitude : il peut faire 10 °C de moins à la Fiderepasshütte qu'à Riezlern.",
+      },
+      {
+        title: "Réévaluez en chemin",
+        description:
+          "Comparez régulièrement le ciel aux prévisions. Si le temps se dégrade, faites demi-tour ou mettez-vous à l'abri — le plateau karstique est dangereux par brouillard.",
+      },
+    ],
+  },
+  {
+    title: "En cas d'urgence",
+    icon: "🆘",
+    tips: [
+      {
+        title: "Signal de détresse alpin",
+        description:
+          "6 signaux par minute (sifflet, lampe, gestes), pause d'une minute, puis répéter — jusqu'à réponse des secours.",
+      },
+      {
+        title: "Que dire au 140",
+        description:
+          "QUI appelle · OÙ exactement · QUE s'est-il passé · COMBIEN de personnes concernées. Restez joignable après l'appel.",
+      },
+      {
+        title: "what3words",
+        description:
+          "Installez l'application avant le départ : elle transforme votre position en 3 mots uniques, transmissibles aux secours même sans réseau data.",
+      },
+      {
+        title: "Assurance secours en montagne",
+        description:
+          "Le secours héliporté est payant en Autriche. L'adhésion Bergrettung Österreich (~28 EUR/an) couvre les frais de recherche et de sauvetage.",
+      },
+    ],
+  },
+];
+
 // ─── Geography & access ──────────────────────────────────────
 
 export const TREK_ACCESS = {

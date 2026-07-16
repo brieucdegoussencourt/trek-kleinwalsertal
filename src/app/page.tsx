@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { TREK_DAYS } from "@/data/trek";
 import Nav, { type Tab } from "@/components/Nav";
@@ -8,6 +8,8 @@ import Hero from "@/components/Hero";
 import DayCard from "@/components/DayCard";
 import DayDetail from "@/components/DayDetail";
 import SummaryTable from "@/components/SummaryTable";
+import Weather from "@/components/Weather";
+import SafetyTips from "@/components/SafetyTips";
 import Checklist from "@/components/Checklist";
 import Footer from "@/components/Footer";
 
@@ -15,13 +17,15 @@ import Footer from "@/components/Footer";
 const TrekMap = dynamic(() => import("@/components/TrekMap"), {
   ssr: false,
   loading: () => (
-    <div className="h-[360px] sm:h-[440px] w-full rounded-2xl bg-stone-100 animate-pulse" />
+    <div className="h-[380px] sm:h-[460px] w-full rounded-2xl bg-stone-100 animate-pulse" />
   ),
 });
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "itineraire",    label: "Itinéraire"    },
   { id: "recapitulatif", label: "Récapitulatif" },
+  { id: "meteo",         label: "Météo"         },
+  { id: "securite",      label: "Sécurité"      },
   { id: "checklist",     label: "Checklist"     },
 ];
 
@@ -30,6 +34,14 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState(1);
 
   const dayData = TREK_DAYS.find((d) => d.dayNumber === selectedDay)!;
+
+  // Map click → select the day AND bring its recap into view.
+  const handleMapSelect = useCallback((dayNumber: number) => {
+    setSelectedDay(dayNumber);
+    document
+      .getElementById("day-detail")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   return (
     <div className="min-h-screen bg-snow font-sans text-foreground">
@@ -44,12 +56,12 @@ export default function Home() {
 
       <main id="content" className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
         {/* ── Tab bar ────────────────────────────────────────── */}
-        <div className="flex border-b border-stone-200 mb-8">
+        <div className="flex border-b border-stone-200 mb-8 overflow-x-auto">
           {TABS.map(({ id, label }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`px-5 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
+              className={`shrink-0 px-4 sm:px-5 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
                 activeTab === id
                   ? "border-pine text-pine"
                   : "border-transparent text-stone-500 hover:text-stone-700"
@@ -63,6 +75,22 @@ export default function Home() {
         {/* ── Itinéraire ─────────────────────────────────────── */}
         {activeTab === "itineraire" && (
           <div className="space-y-6">
+            {/* Overview map — whole trip, one colour per day */}
+            <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-sm">
+              <div className="flex items-baseline justify-between px-1 pb-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+                  Vue d&rsquo;ensemble du trek
+                </p>
+                <p className="text-[11px] text-stone-400">
+                  Cliquez un tracé pour le récap du jour
+                </p>
+              </div>
+              <TrekMap
+                selectedDay={selectedDay}
+                onSelectDay={handleMapSelect}
+              />
+            </div>
+
             {/* Day cards grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {TREK_DAYS.map((day) => (
@@ -75,21 +103,11 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Interactive map */}
-            <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-sm">
-              <div className="flex items-baseline justify-between px-1 pb-3">
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
-                  Carte du parcours · Jour {selectedDay}
-                </p>
-                <p className="text-[11px] text-stone-400">
-                  Touchez une étape sur la carte pour la sélectionner
-                </p>
-              </div>
-              <TrekMap selectedDay={selectedDay} onSelectDay={setSelectedDay} />
-            </div>
-
             {/* Detail panel — key forces remount → triggers animation */}
-            <div className="bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 shadow-sm">
+            <div
+              id="day-detail"
+              className="scroll-mt-20 bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 shadow-sm"
+            >
               <DayDetail key={selectedDay} day={dayData} />
             </div>
           </div>
@@ -97,6 +115,12 @@ export default function Home() {
 
         {/* ── Récapitulatif ──────────────────────────────────── */}
         {activeTab === "recapitulatif" && <SummaryTable />}
+
+        {/* ── Météo ──────────────────────────────────────────── */}
+        {activeTab === "meteo" && <Weather />}
+
+        {/* ── Sécurité ───────────────────────────────────────── */}
+        {activeTab === "securite" && <SafetyTips />}
 
         {/* ── Checklist ──────────────────────────────────────── */}
         {activeTab === "checklist" && <Checklist />}

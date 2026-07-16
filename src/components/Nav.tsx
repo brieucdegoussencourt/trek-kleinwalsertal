@@ -2,17 +2,22 @@
 
 import { useState } from "react";
 
-export type Tab = "itineraire" | "recapitulatif" | "checklist";
+export type Tab =
+  | "itineraire"
+  | "recapitulatif"
+  | "meteo"
+  | "securite"
+  | "checklist";
 
 interface NavProps {
   onTabChange: (tab: Tab) => void;
 }
 
 const NAV_LINKS: { label: string; tab: Tab }[] = [
-  { label: "Itinéraire",      tab: "itineraire" },
-  { label: "Hébergements",    tab: "itineraire" },
-  { label: "Checklist",       tab: "checklist"  },
-  { label: "Infos pratiques", tab: "itineraire" },
+  { label: "Itinéraire", tab: "itineraire" },
+  { label: "Météo",      tab: "meteo"      },
+  { label: "Sécurité",   tab: "securite"   },
+  { label: "Checklist",  tab: "checklist"  },
 ];
 
 export default function Nav({ onTabChange }: NavProps) {
