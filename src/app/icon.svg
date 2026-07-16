@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Trek Kleinwalsertal — twin peaks under a gold sun -->
+  <rect width="64" height="64" rx="14" fill="#0F6E56"/>
+  <circle cx="46" cy="19" r="7" fill="#EF9F27"/>
+  <path d="M4 54 L22 20 L32 38 L41 25 L60 54 Z" fill="#F1EFE8"/>
+  <path d="M22 20 L27 29 L22 27 L17 29 Z" fill="#0F6E56" opacity="0.25"/>
+</svg>
