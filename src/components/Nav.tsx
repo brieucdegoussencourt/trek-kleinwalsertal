@@ -4,6 +4,8 @@ import { useState } from "react";
 
 export type Tab =
   | "itineraire"
+  | "vallee"
+  | "live"
   | "recapitulatif"
   | "meteo"
   | "securite"
@@ -15,6 +17,8 @@ interface NavProps {
 
 const NAV_LINKS: { label: string; tab: Tab }[] = [
   { label: "Itinéraire", tab: "itineraire" },
+  { label: "La vallée",  tab: "vallee"     },
+  { label: "Live",       tab: "live"       },
   { label: "Météo",      tab: "meteo"      },
   { label: "Sécurité",   tab: "securite"   },
   { label: "Checklist",  tab: "checklist"  },

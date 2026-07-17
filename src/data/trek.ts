@@ -525,6 +525,113 @@ export const SAFETY_SECTIONS: SafetySection[] = [
   },
 ];
 
+// ─── La vallée — chapitres de présentation ───────────────────
+
+export interface ValleyChapter {
+  title: string;
+  paragraphs: string[];
+  image: {
+    /** Wikimedia Commons thumbnail (freely licensed). */
+    src: string;
+    alt: string;
+    credit: string;
+  };
+  links: { label: string; url: string }[];
+}
+
+export const VALLEY_CHAPTERS: ValleyChapter[] = [
+  {
+    title: "Une enclave singulière",
+    paragraphs: [
+      "Le Kleinwalsertal est une curiosité géographique : cette vallée autrichienne du Vorarlberg n'est accessible par la route que depuis l'Allemagne, via Oberstdorf. Coupée du reste de l'Autriche par les crêtes, elle vit depuis un siècle au rythme de ses voisins bavarois — on y roulait au Deutsche Mark bien avant l'euro.",
+      "Quatre villages s'égrènent le long de la Breitach entre 1 086 et 1 244 m : Riezlern, Hirschegg, Mittelberg et Baad, tout au fond. Une seule commune, Mittelberg, et à peine 5 000 habitants pour l'une des vallées les plus visitées des Alpes.",
+    ],
+    image: {
+      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Riezlern-view_from_Schwende_to_Riezlern_village-01ESD.jpg/1280px-Riezlern-view_from_Schwende_to_Riezlern_village-01ESD.jpg",
+      alt: "Vue sur le village de Riezlern dans la vallée",
+      credit: "Rikki Mitterer · CC BY-SA 4.0 · Wikimedia Commons",
+    },
+    links: [
+      { label: "Kleinwalsertal — Wikipédia", url: "https://fr.wikipedia.org/wiki/Kleinwalsertal" },
+      { label: "Site officiel de la vallée", url: "https://www.kleinwalsertal.com/en/" },
+    ],
+  },
+  {
+    title: "Le peuple Walser",
+    paragraphs: [
+      "Vers 1270, des familles venues du Haut-Valais suisse franchissent les cols pour coloniser les hautes vallées de l'arc alpin. Ces Walser — « Valaisans » — s'installent ici vers 1300 et défrichent la vallée. Libres paysans de montagne, ils paient leur indépendance d'une vie rude à plus de 1 100 m.",
+      "Leur héritage est partout : le dialecte walser encore parlé, les maisons de bois brunies par le soleil, les hameaux dispersés et l'église St. Jodok de Mittelberg. Le Walsermuseum de Riezlern raconte cette épopée alpine.",
+    ],
+    image: {
+      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Bei_der_Kirche_-_panoramio_%283%29.jpg/1280px-Bei_der_Kirche_-_panoramio_%283%29.jpg",
+      alt: "L'église de Mittelberg, cœur historique walser de la vallée",
+      credit: "Richard Mayer · CC BY 3.0 · Wikimedia Commons",
+    },
+    links: [
+      { label: "Les Walser — Wikipédia", url: "https://fr.wikipedia.org/wiki/Walser" },
+    ],
+  },
+  {
+    title: "Des sommets de caractère",
+    paragraphs: [
+      "Le Grosser Widderstein (2 533 m) veille sur le fond de la vallée — c'est lui que vous contournerez au jour 3, et il figure sur le blason de Mittelberg. Face à lui, le Hoher Ifen (2 230 m) dresse sa silhouette unique dans les Alpes : une dalle calcaire inclinée, posée comme un paquebot de pierre.",
+      "Entre les deux, la crête du Fellhorn et de la Kanzelwand marque la frontière germano-autrichienne — votre itinéraire du jour 1 la longe au plus près.",
+    ],
+    image: {
+      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Gro%C3%9Fer_Kleiner_Widderstein_von_Osten.jpg/1280px-Gro%C3%9Fer_Kleiner_Widderstein_von_Osten.jpg",
+      alt: "Le Grosser et le Kleiner Widderstein vus de l'est",
+      credit: "Whgler · CC BY-SA 4.0 · Wikimedia Commons",
+    },
+    links: [
+      { label: "Grosser Widderstein — Wikipédia (de)", url: "https://de.wikipedia.org/wiki/Gro%C3%9Fer_Widderstein" },
+      { label: "Hoher Ifen — Wikipédia", url: "https://fr.wikipedia.org/wiki/Hoher_Ifen" },
+    ],
+  },
+  {
+    title: "Le Gottesacker, désert de pierre",
+    paragraphs: [
+      "Au pied du Hoher Ifen s'étend l'un des paysages les plus étranges d'Europe centrale : le Gottesackerplateau, « champ du repos de Dieu ». Sept kilomètres carrés de lapiaz — un calcaire blanc strié, crevassé, sculpté par l'eau depuis des millions d'années.",
+      "Sous vos pieds, le Hölloch : près de 13 km de galeries souterraines, l'un des plus grands réseaux karstiques d'Allemagne — son entrée béante se visite au jour 4. L'ensemble est classé réserve naturelle : restez sur le sentier balisé.",
+    ],
+    image: {
+      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Hoher_Ifen_mit_Gottesacker_%28NSG_700.12%29.jpg/1280px-Hoher_Ifen_mit_Gottesacker_%28NSG_700.12%29.jpg",
+      alt: "Le Hoher Ifen et le plateau karstique du Gottesacker",
+      credit: "CatalpaSpirit · CC BY-SA 4.0 · Wikimedia Commons",
+    },
+    links: [
+      { label: "Le Gottesackerplateau — Vorarlberg Tourismus", url: "https://www.vorarlberg.travel/en/gottesackerplateau-kleinwalsertal/" },
+    ],
+  },
+  {
+    title: "La Breitachklamm, porte de la vallée",
+    paragraphs: [
+      "La Breitach, qui draine toute la vallée, s'échappe vers Oberstdorf par une entaille spectaculaire : la Breitachklamm, la gorge rocheuse la plus profonde d'Europe centrale — jusqu'à 150 m de parois au-dessus du torrent.",
+      "Des passerelles taillées dans la roche permettent de la parcourir en une heure environ. Une idée d'excursion parfaite pour la veille du départ ou le lendemain du trek, à dix minutes de Riezlern.",
+    ],
+    image: {
+      src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Breitachklamm_11072015_%28Foto_Hilarmont%29_%28110%29.jpg/1280px-Breitachklamm_11072015_%28Foto_Hilarmont%29_%28110%29.jpg",
+      alt: "Les parois de la Breitachklamm au-dessus du torrent",
+      credit: "Hilarmont · CC BY-SA 3.0 de · Wikimedia Commons",
+    },
+    links: [
+      { label: "Breitachklamm — site officiel", url: "https://www.breitachklamm.com/" },
+    ],
+  },
+];
+
+// ─── Live tracking ───────────────────────────────────────────
+
+export interface LiveTracker {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export const LIVE_TRACKERS: LiveTracker[] = [
+  { id: "brieuc", name: "Brieuc", color: "#378ADD" }, // azure
+  { id: "sophie", name: "Sophie", color: "#D85A30" }, // coral
+];
+
 // ─── Geography & access ──────────────────────────────────────
 
 export const TREK_ACCESS = {

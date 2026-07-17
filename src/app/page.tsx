@@ -8,6 +8,8 @@ import Hero from "@/components/Hero";
 import DayCard from "@/components/DayCard";
 import DayDetail from "@/components/DayDetail";
 import SummaryTable from "@/components/SummaryTable";
+import ValleySection from "@/components/ValleySection";
+import LiveSection from "@/components/LiveSection";
 import Weather from "@/components/Weather";
 import SafetyTips from "@/components/SafetyTips";
 import Checklist from "@/components/Checklist";
@@ -23,6 +25,8 @@ const TrekMap = dynamic(() => import("@/components/TrekMap"), {
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "itineraire",    label: "Itinéraire"    },
+  { id: "vallee",        label: "La vallée"     },
+  { id: "live",          label: "📍 Live"       },
   { id: "recapitulatif", label: "Récapitulatif" },
   { id: "meteo",         label: "Météo"         },
   { id: "securite",      label: "Sécurité"      },
@@ -32,6 +36,9 @@ const TABS: { id: Tab; label: string }[] = [
 export default function Home() {
   const [activeTab,   setActiveTab]   = useState<Tab>("itineraire");
   const [selectedDay, setSelectedDay] = useState(1);
+  // Once visited, the Live section stays mounted (hidden) so an active
+  // GPS recording survives tab switches.
+  const [liveVisited, setLiveVisited] = useState(false);
 
   const dayData = TREK_DAYS.find((d) => d.dayNumber === selectedDay)!;
 
@@ -48,6 +55,7 @@ export default function Home() {
       <Nav
         onTabChange={(tab) => {
           setActiveTab(tab);
+          if (tab === "live") setLiveVisited(true);
           document.getElementById("content")?.scrollIntoView({ behavior: "smooth" });
         }}
       />
@@ -60,7 +68,10 @@ export default function Home() {
           {TABS.map(({ id, label }) => (
             <button
               key={id}
-              onClick={() => setActiveTab(id)}
+              onClick={() => {
+                setActiveTab(id);
+                if (id === "live") setLiveVisited(true);
+              }}
               className={`shrink-0 px-4 sm:px-5 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
                 activeTab === id
                   ? "border-pine text-pine"
@@ -110,6 +121,16 @@ export default function Home() {
             >
               <DayDetail key={selectedDay} day={dayData} />
             </div>
+          </div>
+        )}
+
+        {/* ── La vallée ──────────────────────────────────────── */}
+        {activeTab === "vallee" && <ValleySection />}
+
+        {/* ── Live — kept mounted so recording survives tab switches ── */}
+        {(liveVisited || activeTab === "live") && (
+          <div className={activeTab === "live" ? "" : "hidden"}>
+            <LiveSection />
           </div>
         )}
 
