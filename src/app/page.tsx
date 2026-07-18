@@ -36,19 +36,29 @@ const TABS: { id: Tab; label: string }[] = [
 export default function Home() {
   const [activeTab,   setActiveTab]   = useState<Tab>("itineraire");
   const [selectedDay, setSelectedDay] = useState(1);
+  // False until a day is explicitly chosen — the map stays a pure overview.
+  const [dayFocused,  setDayFocused]  = useState(false);
   // Once visited, the Live section stays mounted (hidden) so an active
   // GPS recording survives tab switches.
   const [liveVisited, setLiveVisited] = useState(false);
 
   const dayData = TREK_DAYS.find((d) => d.dayNumber === selectedDay)!;
 
-  // Map click → select the day AND bring its recap into view.
-  const handleMapSelect = useCallback((dayNumber: number) => {
+  const selectDay = useCallback((dayNumber: number) => {
     setSelectedDay(dayNumber);
-    document
-      .getElementById("day-detail")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setDayFocused(true);
   }, []);
+
+  // Map click → select the day AND bring its recap into view.
+  const handleMapSelect = useCallback(
+    (dayNumber: number) => {
+      selectDay(dayNumber);
+      document
+        .getElementById("day-detail")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
+    [selectDay],
+  );
 
   return (
     <div className="min-h-screen bg-snow font-sans text-foreground">
@@ -98,7 +108,9 @@ export default function Home() {
               </div>
               <TrekMap
                 selectedDay={selectedDay}
+                focused={dayFocused}
                 onSelectDay={handleMapSelect}
+                onReset={() => setDayFocused(false)}
               />
             </div>
 
@@ -109,7 +121,7 @@ export default function Home() {
                   key={day.dayNumber}
                   day={day}
                   isActive={selectedDay === day.dayNumber}
-                  onClick={() => setSelectedDay(day.dayNumber)}
+                  onClick={() => selectDay(day.dayNumber)}
                 />
               ))}
             </div>
