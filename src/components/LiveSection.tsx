@@ -380,7 +380,9 @@ export default function LiveSection() {
           {LIVE_TRACKERS.map((tracker) => {
             const log = live?.trackers[tracker.id]?.log ?? [];
             return (
-              <div key={tracker.id}>
+              // min-w-0: let the column shrink below its content's intrinsic
+              // width, so long place names truncate instead of overflowing.
+              <div key={tracker.id} className="min-w-0">
                 <div className="flex items-center gap-2 mb-2">
                   <span
                     className="h-2.5 w-2.5 rounded-full"
