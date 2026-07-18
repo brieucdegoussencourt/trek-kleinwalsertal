@@ -18,14 +18,26 @@ export interface LivePoint {
   acc?: number;
 }
 
+export interface LogEntry {
+  /** Unix ms. */
+  t: number;
+  lat: number;
+  lng: number;
+  /** Reverse-geocoded place, e.g. "Mittelberg, Vorarlberg, Autriche". */
+  place: string | null;
+}
+
 export interface TrackerState {
   recording: boolean;
   /** Unix ms of the last update (points or start/stop). */
   updatedAt: number;
   track: LivePoint[];
+  /** Position journal — one entry per minute of recording at most. */
+  log: LogEntry[];
 }
 
 const MAX_POINTS = 4000;
+const MAX_LOG = 300;
 
 const REDIS_URL =
   process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
@@ -70,7 +82,7 @@ async function redisSet(key: string, value: string): Promise<void> {
 const KEY_PREFIX = "live:";
 
 function emptyState(): TrackerState {
-  return { recording: false, updatedAt: 0, track: [] };
+  return { recording: false, updatedAt: 0, track: [], log: [] };
 }
 
 /** Halve the track (keep every 2nd point) once it exceeds the cap. */
@@ -80,11 +92,16 @@ function thin(track: LivePoint[]): LivePoint[] {
 }
 
 export async function getTracker(id: string): Promise<TrackerState> {
+  let state: TrackerState | undefined;
   if (hasRedis) {
     const raw = await redisGet(KEY_PREFIX + id);
-    return raw ? (JSON.parse(raw) as TrackerState) : emptyState();
+    state = raw ? (JSON.parse(raw) as TrackerState) : undefined;
+  } else {
+    state = memMap().get(id);
   }
-  return memMap().get(id) ?? emptyState();
+  if (!state) return emptyState();
+  state.log ??= []; // states written before the journal existed
+  return state;
 }
 
 async function setTracker(id: string, state: TrackerState): Promise<void> {
@@ -98,11 +115,18 @@ async function setTracker(id: string, state: TrackerState): Promise<void> {
 export async function appendPoints(
   id: string,
   points: LivePoint[],
-): Promise<void> {
+): Promise<TrackerState> {
   const state = await getTracker(id);
   state.track = thin([...state.track, ...points]);
   state.updatedAt = Date.now();
   state.recording = true;
+  await setTracker(id, state);
+  return state;
+}
+
+export async function appendLog(id: string, entry: LogEntry): Promise<void> {
+  const state = await getTracker(id);
+  state.log = [...state.log, entry].slice(-MAX_LOG);
   await setTracker(id, state);
 }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { LIVE_TRACKERS } from "@/data/trek";
 import {
+  appendLog,
   appendPoints,
   clearTracker,
   getTracker,
@@ -8,6 +9,10 @@ import {
   type LivePoint,
   type TrackerState,
 } from "@/lib/liveStore";
+import { reverseGeocode } from "@/lib/geocode";
+
+/** Minimum spacing between journal entries while recording. */
+const LOG_INTERVAL_MS = 60_000;
 
 const VALID_IDS = new Set(LIVE_TRACKERS.map((t) => t.id));
 
@@ -74,7 +79,20 @@ export async function POST(req: Request) {
       if (points.length === 0) {
         return NextResponse.json({ error: "aucun point" }, { status: 400 });
       }
-      await appendPoints(user, points);
+      const state = await appendPoints(user, points);
+
+      // Journal: at most one reverse-geocoded entry per minute.
+      const last = points[points.length - 1];
+      const lastLog = state.log[state.log.length - 1];
+      if (!lastLog || last.t - lastLog.t >= LOG_INTERVAL_MS) {
+        const place = await reverseGeocode(last.lat, last.lng);
+        await appendLog(user, {
+          t: last.t,
+          lat: last.lat,
+          lng: last.lng,
+          place,
+        });
+      }
       return NextResponse.json({ ok: true, added: points.length });
     }
     case "start":

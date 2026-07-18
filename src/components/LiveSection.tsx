@@ -364,6 +364,79 @@ export default function LiveSection() {
           par heure de suivi GPS.
         </p>
       </div>
+
+      {/* Position journal */}
+      <div className="bg-white rounded-2xl border border-stone-200 p-5 sm:p-6 shadow-sm">
+        <div className="flex items-baseline justify-between pb-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+            Journal des positions
+          </p>
+          <p className="text-[11px] text-stone-400">
+            Une entrée par minute d&rsquo;enregistrement
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-6">
+          {LIVE_TRACKERS.map((tracker) => {
+            const log = live?.trackers[tracker.id]?.log ?? [];
+            return (
+              <div key={tracker.id}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ background: tracker.color }}
+                  />
+                  <p className="text-sm font-semibold text-stone-800">
+                    {tracker.name}
+                  </p>
+                  <p className="text-xs text-stone-400">
+                    {log.length === 0
+                      ? "· aucune position"
+                      : `· ${log.length} position${log.length > 1 ? "s" : ""}`}
+                  </p>
+                </div>
+
+                {log.length > 0 && (
+                  <ol className="max-h-80 overflow-y-auto divide-y divide-stone-100 rounded-xl border border-stone-100">
+                    {[...log].reverse().map((entry) => {
+                      const d = new Date(entry.t);
+                      return (
+                        <li
+                          key={entry.t}
+                          className="flex items-baseline gap-3 px-3 py-2"
+                        >
+                          <div className="shrink-0 text-right">
+                            <p className="text-sm font-semibold text-stone-700 tabular-nums">
+                              {d.toLocaleTimeString("fr-BE", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </p>
+                            <p className="text-[10px] text-stone-400 tabular-nums">
+                              {d.toLocaleDateString("fr-BE", {
+                                day: "2-digit",
+                                month: "2-digit",
+                              })}
+                            </p>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm text-stone-700 truncate">
+                              {entry.place ?? "Position enregistrée"}
+                            </p>
+                            <p className="text-[11px] text-stone-400 font-mono tabular-nums">
+                              {entry.lat.toFixed(5)}, {entry.lng.toFixed(5)}
+                            </p>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
