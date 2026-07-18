@@ -44,21 +44,12 @@ export default function Home() {
 
   const dayData = TREK_DAYS.find((d) => d.dayNumber === selectedDay)!;
 
+  // Selecting a day (map or card) focuses it: the map zooms to the day
+  // and the recap below updates — without scrolling the page.
   const selectDay = useCallback((dayNumber: number) => {
     setSelectedDay(dayNumber);
     setDayFocused(true);
   }, []);
-
-  // Map click → select the day AND bring its recap into view.
-  const handleMapSelect = useCallback(
-    (dayNumber: number) => {
-      selectDay(dayNumber);
-      document
-        .getElementById("day-detail")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    },
-    [selectDay],
-  );
 
   return (
     <div className="min-h-screen bg-snow font-sans text-foreground">
@@ -103,13 +94,13 @@ export default function Home() {
                   Vue d&rsquo;ensemble du trek
                 </p>
                 <p className="text-[11px] text-stone-400">
-                  Cliquez un tracé pour le récap du jour
+                  Cliquez un tracé pour zoomer sur le jour
                 </p>
               </div>
               <TrekMap
                 selectedDay={selectedDay}
                 focused={dayFocused}
-                onSelectDay={handleMapSelect}
+                onSelectDay={selectDay}
                 onReset={() => setDayFocused(false)}
               />
             </div>
