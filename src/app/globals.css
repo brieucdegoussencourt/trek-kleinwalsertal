@@ -39,3 +39,10 @@ body {
   0%   { transform: scale(1);   opacity: 0.35; }
   100% { transform: scale(2.1); opacity: 0;    }
 }
+
+/* ── Leaflet ────────────────────────────────────────────── */
+/* Tiles still loading show the site's paper tone instead of the
+   default harsh grey. */
+.leaflet-container {
+  background: #eae6dc;
+}

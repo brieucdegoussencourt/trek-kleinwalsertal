@@ -5,6 +5,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { TREK_DAYS, type WaypointKind } from "@/data/trek";
 import { TREK_TRACKS } from "@/data/tracks";
+import { createTopoLayer } from "@/lib/mapTiles";
 
 // One colour per day — the overview legend and trails share these.
 export const DAY_COLOR: Record<number, string> = {
@@ -58,23 +59,22 @@ export default function TrekMap({
       zoomControl: true,
     });
 
-    L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-      maxZoom: 17,
-      subdomains: "abc",
-      attribution:
-        '© <a href="https://openstreetmap.org">OpenStreetMap</a> · ' +
-        '© <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)',
-    }).addTo(map);
+    createTopoLayer().addTo(map);
 
     map.fitBounds(allTrackBounds(), { padding: [30, 30] });
 
     layerRef.current = L.layerGroup().addTo(map);
     mapRef.current = map;
 
-    // Ensure correct sizing after the container settles.
+    // Ensure correct sizing after the container settles, and re-measure
+    // whenever the container resizes (orientation change, layout shifts) —
+    // a stale size leaves grey unrendered bands.
     setTimeout(() => map.invalidateSize(), 0);
+    const observer = new ResizeObserver(() => map.invalidateSize());
+    observer.observe(containerRef.current);
 
     return () => {
+      observer.disconnect();
       map.remove();
       mapRef.current = null;
       layerRef.current = null;

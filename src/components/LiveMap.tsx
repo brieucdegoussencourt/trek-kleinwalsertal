@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { LIVE_TRACKERS } from "@/data/trek";
 import { TREK_TRACKS } from "@/data/tracks";
 import type { LivePoint, TrackerState } from "@/lib/liveStore";
+import { createTopoLayer } from "@/lib/mapTiles";
 
 interface LiveMapProps {
   trackers: Record<string, TrackerState>;
@@ -33,13 +34,7 @@ export default function LiveMap({ trackers, now }: LiveMapProps) {
       zoomControl: true,
     });
 
-    L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-      maxZoom: 17,
-      subdomains: "abc",
-      attribution:
-        '© <a href="https://openstreetmap.org">OpenStreetMap</a> · ' +
-        '© <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)',
-    }).addTo(map);
+    createTopoLayer().addTo(map);
 
     // Default frame: the whole planned trek.
     const all = Object.values(TREK_TRACKS).flat() as [number, number][];
