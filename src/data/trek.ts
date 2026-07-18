@@ -97,9 +97,9 @@ export const TREK_META = {
 // ─── Summary ─────────────────────────────────────────────────
 
 export const TREK_SUMMARY: TrekSummary = {
-  totalKm: 41.9,
-  totalElevationGainM: 2770,
-  totalElevationLossM: 3620,
+  totalKm: 43.1,
+  totalElevationGainM: 2690,
+  totalElevationLossM: 3530,
   totalHikingHours: "~18h",
   nights: 3,
   days: 4,
@@ -116,16 +116,17 @@ export const TREK_DAYS: TrekDay[] = [
     from: "Riezlern",
     to: "Fiderepasshütte",
     stats: {
-      distanceKm: 9.5,
+      distanceKm: 10.1,
       elevationGainM: 1440,
-      elevationLossM: 460,
+      elevationLossM: 480,
       durationMin: "5h00",
       durationMax: "6h00",
       altitudeNightM: 2070,
     },
     difficulty: "sustained",
     itinerary: [
-      "Départ à pied de Riezlern, station-vallée de la Kanzelwandbahn (1 087 m).",
+      "Départ de l'Hotel Jagdhof (Riezlern · Westegg, 1 096 m) — petit-déjeuner copieux conseillé !",
+      "Courte mise en jambes jusqu'à la station-vallée de la Kanzelwandbahn (~10 min).",
       "Longue montée régulière par les pistes et sentiers jusqu'à la station supérieure de la Kanzelwand (~1 957 m).",
       "Courte ascension jusqu'au sommet de la Kanzelwand (2 058 m) pour le panorama à 360°.",
       "Traversée du versant allemand (Allgäu) : alternance de courtes montées et descentes le long des crêtes.",
@@ -133,7 +134,8 @@ export const TREK_DAYS: TrekDay[] = [
       "Arrivée à la Fiderepasshütte (2 070 m), perchée sur le col — installation et coucher de soleil.",
     ],
     waypoints: [
-      { name: "Riezlern · Kanzelwandbahn (vallée)", coord: [47.35584, 10.18486], altitudeM: 1087, kind: "start" },
+      { name: "Hotel Jagdhof · Riezlern",           coord: [47.35886, 10.19116], altitudeM: 1096, kind: "start" },
+      { name: "Kanzelwandbahn · station vallée",    coord: [47.35584, 10.18486], altitudeM: 1087, kind: "poi" },
       { name: "Kanzelwand · station supérieure",    coord: [47.33767, 10.20123], altitudeM: 1957, kind: "poi" },
       { name: "Sommet de la Kanzelwand",            coord: [47.33478, 10.20770], altitudeM: 2058, kind: "peak" },
       { name: "Fiderepasshütte",                    coord: [47.31561, 10.21244], altitudeM: 2070, kind: "hut" },
@@ -163,7 +165,7 @@ export const TREK_DAYS: TrekDay[] = [
       },
     ],
     practicalInfo:
-      "Étape en montée intégrale à pied depuis la vallée (1 087 m → 2 070 m). Pour raccourcir : la Kanzelwandbahn (~17 EUR/pers aller) monte à la station supérieure et ramène l'étape à ~4 km / +580 m. Réservation Fiderepasshütte sur fiderepasshuette.de — indispensable en juillet. Paiement ESPÈCES uniquement. Prévoir 80–90 EUR/pers demi-pension.",
+      "Étape en montée intégrale à pied depuis l'hôtel (1 096 m → 2 070 m). Pour raccourcir : la Kanzelwandbahn — à 10 min à pied du Jagdhof — monte à la station supérieure (~17 EUR/pers aller) et ramène l'étape à ~4 km / +580 m. Réservation Fiderepasshütte sur fiderepasshuette.de — indispensable en juillet. Paiement ESPÈCES uniquement. Prévoir 80–90 EUR/pers demi-pension.",
     accommodation: {
       name: "Fiderepasshütte",
       type: "refuge-dav",
@@ -253,7 +255,7 @@ export const TREK_DAYS: TrekDay[] = [
       elevationLossM: 840,
       durationMin: "2h15",
       durationMax: "2h45",
-      altitudeNightM: 1086,
+      altitudeNightM: 1111,
     },
     difficulty: "easy",
     itinerary: [
@@ -269,7 +271,7 @@ export const TREK_DAYS: TrekDay[] = [
       { name: "Hochalppass",            coord: [47.27594, 10.11491], altitudeM: 1935, kind: "pass" },
       { name: "Bärgunthütte",           coord: [47.29277, 10.11403], altitudeM: 1408, kind: "hut" },
       { name: "Baad",                   coord: [47.31035, 10.12128], altitudeM: 1244, kind: "village" },
-      { name: "Hirschegg · A-ROSA Ifen", coord: [47.34860, 10.17000], altitudeM: 1086, kind: "transfer", transfer: true },
+      { name: "Hirschegg · A-ROSA Ifen", coord: [47.34942, 10.17191], altitudeM: 1111, kind: "transfer", transfer: true },
     ],
     mustSee: [
       {
@@ -300,7 +302,7 @@ export const TREK_DAYS: TrekDay[] = [
     accommodation: {
       name: "A-ROSA Ifen Hotel",
       type: "hotel",
-      altitudeM: 1086,
+      altitudeM: 1111,
       capacity: "5 étoiles — Spa inclus",
       bookingUrl: "https://www.arosahotels.co.uk",
     },
@@ -311,15 +313,15 @@ export const TREK_DAYS: TrekDay[] = [
     dateShort: "Ven. 24 juil.",
     label: "Final de légende",
     from: "Hirschegg",
-    to: "Riezlern",
+    to: "Hirschegg",
     via: "Gottesackerplateau",
     stats: {
-      distanceKm: 13.2,
-      elevationGainM: 380,
-      elevationLossM: 1370,
+      distanceKm: 13.8,
+      elevationGainM: 300,
+      elevationLossM: 1260,
       durationMin: "4h00",
       durationMax: "5h00",
-      altitudeNightM: 1086,
+      altitudeNightM: 1111,
     },
     difficulty: "sustained",
     itinerary: [
@@ -329,7 +331,8 @@ export const TREK_DAYS: TrekDay[] = [
       "Traversée du Gottesackerplateau : lapiaz, dolines et gouffres — suivre attentivement le balisage (bonne visibilité indispensable).",
       "Passage par les ruines de la Gottesackeralpe (~1 835 m).",
       "Descente par le Mahdtal, devant l'entrée béante du Hölloch (gouffre de 80 m).",
-      "Sortie à Wälde / Hirschegg, puis retour à Riezlern (WalserBus ou à pied le long de la Schwarzwasserbach).",
+      "Sortie du Mahdtal à Wälde, puis retour à Hirschegg à pied — la boucle est bouclée.",
+      "Dernière nuit au A-ROSA Ifen Hotel : spa, sauna et dîner pour fêter le trek !",
     ],
     waypoints: [
       { name: "Auenhütte · Ifenbahn",   coord: [47.34292, 10.13698], altitudeM: 1280, kind: "start" },
@@ -337,7 +340,7 @@ export const TREK_DAYS: TrekDay[] = [
       { name: "Gottesackerplateau",     coord: [47.36433, 10.10002], altitudeM: 1900, kind: "poi" },
       { name: "Gottesackeralpe",        coord: [47.37210, 10.11130], altitudeM: 1835, kind: "poi" },
       { name: "Hölloch",                coord: [47.37785, 10.15040], altitudeM: 1180, kind: "poi" },
-      { name: "Riezlern",               coord: [47.35936, 10.18833], altitudeM: 1086, kind: "village" },
+      { name: "Hirschegg · A-ROSA Ifen", coord: [47.34942, 10.17191], altitudeM: 1111, kind: "village" },
     ],
     mustSee: [
       {
@@ -364,12 +367,13 @@ export const TREK_DAYS: TrekDay[] = [
       },
     ],
     practicalInfo:
-      "Version par défaut : Ifenbahn depuis l'Auenhütte jusqu'à Ifen II (~2 030 m) — vivement recommandé après 3 jours de trek. Puriste ? Montée intégrale à pied : +17,4 km / +1 180 m / ~7 h. Aucun point d'eau ni ravitaillement sur le plateau : prévoir eau + en-cas. Horaires Ifenbahn sur ok-bergbahnen.com.",
+      "Boucle depuis Hirschegg : déposez les gros sacs à l'hôtel avant de partir ! Version par défaut : Ifenbahn depuis l'Auenhütte jusqu'à Ifen II (~2 030 m) — vivement recommandé après 3 jours de trek. Puriste ? Montée intégrale à pied : 18 km / +1 100 m / ~7 h. Aucun point d'eau ni ravitaillement sur le plateau : prévoir eau + en-cas. Horaires Ifenbahn sur ok-bergbahnen.com.",
     accommodation: {
-      name: "Hotel Riezlern",
+      name: "A-ROSA Ifen Hotel",
       type: "hotel",
-      altitudeM: 1086,
-      capacity: "Retour à la base",
+      altitudeM: 1111,
+      capacity: "5 étoiles — Spa inclus · 2e nuit",
+      bookingUrl: "https://www.arosahotels.co.uk",
     },
   },
 ];
