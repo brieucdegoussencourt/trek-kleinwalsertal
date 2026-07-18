@@ -26,6 +26,8 @@ A single-page Next.js app that turns structured data files into a full interacti
 | *Hero — key stats at a glance* | *Overview map — clickable day trails* |
 | ![Day recap — step by step](docs/screenshots/day-detail.png) | ![Météo — live forecast per stage](docs/screenshots/meteo.png) |
 | *Day recap — step-by-step route* | *Météo — altitude-adjusted forecast* |
+| ![La vallée — five illustrated chapters](docs/screenshots/vallee.png) | ![Live — GPS tracking on the valley map](docs/screenshots/live.png) |
+| *La vallée — five illustrated chapters* | *📍 Live — GPS tracking for friends & family* |
 
 ![Sécurité — emergency numbers and safety tips](docs/screenshots/securite.png)
 *Sécurité — tap-to-call emergency numbers and mountain safety tips*
