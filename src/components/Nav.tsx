@@ -6,6 +6,7 @@ export type Tab =
   | "itineraire"
   | "vallee"
   | "live"
+  | "photos"
   | "recapitulatif"
   | "meteo"
   | "securite"
@@ -19,6 +20,7 @@ const NAV_LINKS: { label: string; tab: Tab }[] = [
   { label: "Itinéraire", tab: "itineraire" },
   { label: "La vallée",  tab: "vallee"     },
   { label: "Live",       tab: "live"       },
+  { label: "Photos",     tab: "photos"     },
   { label: "Météo",      tab: "meteo"      },
   { label: "Sécurité",   tab: "securite"   },
   { label: "Checklist",  tab: "checklist"  },
