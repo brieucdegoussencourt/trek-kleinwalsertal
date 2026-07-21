@@ -10,6 +10,7 @@ import DayDetail from "@/components/DayDetail";
 import SummaryTable from "@/components/SummaryTable";
 import ValleySection from "@/components/ValleySection";
 import LiveSection from "@/components/LiveSection";
+import PhotosSection from "@/components/PhotosSection";
 import Weather from "@/components/Weather";
 import SafetyTips from "@/components/SafetyTips";
 import Checklist from "@/components/Checklist";
@@ -27,6 +28,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "itineraire",    label: "Itinéraire"    },
   { id: "vallee",        label: "La vallée"     },
   { id: "live",          label: "📍 Live"       },
+  { id: "photos",        label: "📷 Photos"     },
   { id: "recapitulatif", label: "Récapitulatif" },
   { id: "meteo",         label: "Météo"         },
   { id: "securite",      label: "Sécurité"      },
@@ -136,6 +138,9 @@ export default function Home() {
             <LiveSection />
           </div>
         )}
+
+        {/* ── Photos ─────────────────────────────────────────── */}
+        {activeTab === "photos" && <PhotosSection />}
 
         {/* ── Récapitulatif ──────────────────────────────────── */}
         {activeTab === "recapitulatif" && <SummaryTable />}

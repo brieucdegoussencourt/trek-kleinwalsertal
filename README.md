@@ -13,6 +13,7 @@ A single-page Next.js app that turns structured data files into a full interacti
 - **Itinerary** — day cards that expand into full details: step-by-step route, must-sees, bonus tips, warnings, practical info, and accommodation. Day 1 starts on foot from the Hotel Jagdhof; Day 4 loops over the Gottesacker back to a second night at the A-ROSA
 - **La vallée** — the Kleinwalsertal in five illustrated chapters (the enclave, the Walser people, the summits, the Gottesacker karst, the Breitachklamm) with freely-licensed Wikimedia Commons photos and learn-more links
 - **📍 Live** — record your GPS track from a phone (Brieuc in azure, Sophie in coral, start/stop, shared record key) and let visitors watch both positions update on the map every 15 s, with live/last-seen status chips and a **position journal**: one reverse-geocoded entry per minute (place, time, exact coordinates)
+- **📷 Photos** — a shared trek album: upload photos straight from the phone (camera or gallery, multi-select, optional caption, same record key as Live). Images are downscaled client-side before upload so they pass on mountain 4G; visitors see the album update as the hike goes on
 - **Summary table** — all 4 days compared side by side
 - **Météo** — live forecast for each stage at its high point, altitude-adjusted (Open-Meteo), with storm/wind warnings and links to specialist mountain weather sites
 - **Sécurité** — tap-to-call emergency numbers (140 / 144 / 112) and mountain safety tips adapted from the official Vorarlberg Tourismus guidance
@@ -28,9 +29,8 @@ A single-page Next.js app that turns structured data files into a full interacti
 | *Day recap — step-by-step route* | *Météo — altitude-adjusted forecast* |
 | ![La vallée — five illustrated chapters](docs/screenshots/vallee.png) | ![Live — GPS tracking on the valley map](docs/screenshots/live.jpg) |
 | *La vallée — five illustrated chapters* | *📍 Live — GPS tracking for friends & family* |
-
-![Sécurité — emergency numbers and safety tips](docs/screenshots/securite.png)
-*Sécurité — tap-to-call emergency numbers and mountain safety tips*
+| ![Sécurité — emergency numbers and safety tips](docs/screenshots/securite.png) | ![Photos — shared trek album with phone uploads](docs/screenshots/photos.jpg) |
+| *Sécurité — tap-to-call emergency numbers* | *📷 Photos — shared album, uploads from the phone* |
 
 ## Stack
 
@@ -38,7 +38,8 @@ A single-page Next.js app that turns structured data files into a full interacti
 - [Tailwind CSS v4](https://tailwindcss.com)
 - [Leaflet](https://leafletjs.com) + [OpenTopoMap](https://opentopomap.org) tiles
 - [Open-Meteo](https://open-meteo.com) forecast API (no key required)
-- [Upstash Redis](https://upstash.com) (Vercel Marketplace) for live-tracking storage — in-memory fallback in local dev
+- [Upstash Redis](https://upstash.com) (Vercel Marketplace) for live-tracking storage and the photo index — in-memory fallback in local dev
+- [Vercel Blob](https://vercel.com/docs/vercel-blob) for photo storage (`BLOB_READ_WRITE_TOKEN`) — inline data URLs in local dev
 - [Nominatim](https://nominatim.org) reverse geocoding for the position journal
 - [Playfair Display](https://fonts.google.com/specimen/Playfair+Display) + [Inter](https://fonts.google.com/specimen/Inter) via `next/font`
 - TypeScript
@@ -47,16 +48,16 @@ A single-page Next.js app that turns structured data files into a full interacti
 
 - `src/data/trek.ts` — all trek content: days, stats, waypoints, valley chapters, weather spots, safety tips, gear, live-tracker identities. One file to update if plans change.
 - `src/data/tracks.ts` — real trail geometry per day, routed along OSM hiking paths with [BRouter](https://brouter.de) (SRTM elevation) and simplified for the web. Per-day distances and elevation figures are measured from these tracks.
-- Live positions live in Redis (`live:<user>` keys), never in the repo.
+- Live positions live in Redis (`live:<user>` keys), never in the repo. Photo bytes live in Vercel Blob (`photos/` prefix), their metadata in Redis (`photos:index`).
 
 ## Run locally
 
 ```bash
 npm install
-vercel env pull .env.development.local   # Redis credentials + LIVE_RECORD_KEY
+vercel env pull .env.development.local   # Redis + Blob credentials + LIVE_RECORD_KEY
 npm run dev
 ```
 
-Without the env file the app still runs — live tracking then uses unauthenticated in-memory storage (dev only).
+Without the env file the app still runs — live tracking and photos then use unauthenticated in-memory storage (dev only).
 
-Deployed on [Vercel](https://vercel.com) — every push to `main` goes live. Writing positions requires the `LIVE_RECORD_KEY` env var to be set (and typed into the Live tab by the person recording).
+Deployed on [Vercel](https://vercel.com) — every push to `main` goes live. Writing positions and uploading photos require the `LIVE_RECORD_KEY` env var to be set (and typed in by the person recording — the key is shared between the Live and Photos tabs). Photo uploads additionally need a [Vercel Blob store](https://vercel.com/docs/vercel-blob) connected to the project (`BLOB_READ_WRITE_TOKEN`).
