@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { LIVE_TRACKERS } from "@/data/trek";
-import { addPhoto, listPhotos, removePhoto } from "@/lib/photoStore";
+import { addPhoto, hasBlob, listPhotos, removePhoto } from "@/lib/photoStore";
 
 /** Vercel serverless request bodies are capped at ~4.5 MB. */
 const MAX_FILE_BYTES = 4_400_000;
@@ -60,18 +60,40 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "photo trop lourde" }, { status: 413 });
   }
 
+  // The data-URL fallback is for local dev only: on Vercel it would push
+  // whole images into the Redis index and explode its request size limit.
+  if (!hasBlob && process.env.VERCEL) {
+    return NextResponse.json(
+      {
+        error:
+          "Stockage photo non configuré — connectez un Blob store au projet " +
+          "sur Vercel puis redéployez (les variables d'environnement ne sont " +
+          "prises en compte qu'au déploiement).",
+      },
+      { status: 503 },
+    );
+  }
+
   const caption = form.get("caption");
   const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-  const photo = await addPhoto(file, {
-    id,
-    user,
-    caption:
-      typeof caption === "string" ? caption.trim().slice(0, MAX_CAPTION) : "",
-    t: Date.now(),
-  });
-
-  return NextResponse.json({ ok: true, photo });
+  try {
+    const photo = await addPhoto(file, {
+      id,
+      user,
+      caption:
+        typeof caption === "string" ? caption.trim().slice(0, MAX_CAPTION) : "",
+      t: Date.now(),
+    });
+    return NextResponse.json({ ok: true, photo });
+  } catch (e) {
+    console.error("photo upload failed:", e);
+    const detail = e instanceof Error ? e.message : "erreur inconnue";
+    return NextResponse.json(
+      { error: `envoi impossible — ${detail}` },
+      { status: 500 },
+    );
+  }
 }
 
 // ── DELETE: remove one photo (key-protected) ────────────────
@@ -91,9 +113,18 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "id manquant" }, { status: 400 });
   }
 
-  const removed = await removePhoto(body.id);
-  if (!removed) {
-    return NextResponse.json({ error: "photo inconnue" }, { status: 404 });
+  try {
+    const removed = await removePhoto(body.id);
+    if (!removed) {
+      return NextResponse.json({ error: "photo inconnue" }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    console.error("photo delete failed:", e);
+    const detail = e instanceof Error ? e.message : "erreur inconnue";
+    return NextResponse.json(
+      { error: `suppression impossible — ${detail}` },
+      { status: 500 },
+    );
   }
-  return NextResponse.json({ ok: true });
 }

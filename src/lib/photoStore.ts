@@ -27,9 +27,14 @@ const INDEX_KEY = "photos:index";
 
 const BLOB_API_URL = "https://vercel.com/api/blob";
 const BLOB_API_VERSION = "12";
-const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 
-const hasBlob = Boolean(BLOB_TOKEN);
+// Connecting a Blob store with a custom env prefix renames the variable
+// (e.g. FOO_READ_WRITE_TOKEN), so fall back to scanning for a token value.
+const BLOB_TOKEN =
+  process.env.BLOB_READ_WRITE_TOKEN ??
+  Object.values(process.env).find((v) => v?.startsWith("vercel_blob_rw_"));
+
+export const hasBlob = Boolean(BLOB_TOKEN);
 
 function blobHeaders(): Record<string, string> {
   return {
@@ -53,7 +58,10 @@ async function blobPut(pathname: string, file: Blob): Promise<string> {
       body: file,
     },
   );
-  if (!res.ok) throw new Error(`Blob PUT ${res.status}`);
+  if (!res.ok) {
+    const detail = (await res.text().catch(() => "")).slice(0, 300);
+    throw new Error(`Blob PUT ${res.status}: ${detail}`);
+  }
   const data = (await res.json()) as { url: string };
   return data.url;
 }
@@ -64,7 +72,10 @@ async function blobDelete(url: string): Promise<void> {
     headers: { ...blobHeaders(), "content-type": "application/json" },
     body: JSON.stringify({ urls: [url] }),
   });
-  if (!res.ok) throw new Error(`Blob DELETE ${res.status}`);
+  if (!res.ok) {
+    const detail = (await res.text().catch(() => "")).slice(0, 300);
+    throw new Error(`Blob DELETE ${res.status}: ${detail}`);
+  }
 }
 
 // ── In-memory fallback (dev) ────────────────────────────────
