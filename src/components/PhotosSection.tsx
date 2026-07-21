@@ -137,7 +137,12 @@ export default function PhotosSection() {
           form.set("file", blob, "photo.jpg");
           const res = await fetch("/api/photos", { method: "POST", body: form });
           if (res.status === 401) throw new Error("Clé d'enregistrement invalide");
-          if (!res.ok) throw new Error(`Erreur serveur (${res.status})`);
+          if (!res.ok) {
+            const data = (await res.json().catch(() => null)) as
+              | { error?: string }
+              | null;
+            throw new Error(data?.error ?? `Erreur serveur (${res.status})`);
+          }
         } catch (e) {
           failed++;
           setError(e instanceof Error ? e.message : "Envoi impossible");
@@ -162,7 +167,12 @@ export default function PhotosSection() {
           body: JSON.stringify({ key: recordKey, id: photo.id }),
         });
         if (res.status === 401) throw new Error("Clé d'enregistrement invalide");
-        if (!res.ok) throw new Error(`Erreur serveur (${res.status})`);
+        if (!res.ok) {
+          const data = (await res.json().catch(() => null)) as
+            | { error?: string }
+            | null;
+          throw new Error(data?.error ?? `Erreur serveur (${res.status})`);
+        }
         setOpenPhoto(null);
         refresh();
       } catch (e) {
