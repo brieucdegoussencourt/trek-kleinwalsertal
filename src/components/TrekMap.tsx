@@ -175,11 +175,14 @@ export default function TrekMap({
     <div className="relative">
       <div
         ref={containerRef}
+        role="region"
+        aria-label="Carte topographique du trek : un tracé coloré par jour, J1 à J4. Les cartes des étapes ci-dessous donnent le même contenu sous forme de texte."
         className="h-[380px] sm:h-[460px] w-full rounded-2xl overflow-hidden z-0"
       />
       {/* Reset to whole-trip overview */}
       {focused && (
         <button
+          type="button"
           onClick={() => {
             onReset();
             mapRef.current?.fitBounds(allTrackBounds(), {
@@ -189,7 +192,7 @@ export default function TrekMap({
           }}
           className="absolute top-3 right-3 z-[1000] rounded-lg bg-white/95 border border-stone-200 shadow-sm px-3 py-1.5 text-[11px] font-semibold text-stone-600 hover:text-pine transition-colors"
         >
-          ↺ Vue d&rsquo;ensemble
+          <span aria-hidden="true">↺ </span>Vue d&rsquo;ensemble
         </button>
       )}
     </div>

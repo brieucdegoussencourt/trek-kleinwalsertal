@@ -86,13 +86,21 @@ export default function Weather() {
         <h3 className="font-display text-xl text-stone-700 mb-1">
           Prévisions sur le parcours
         </h3>
-        <p className="text-sm text-stone-400 mb-5">
+        <p className="text-sm text-stone-600 mb-5">
           Au point haut de chaque étape, température ajustée à l&rsquo;altitude
           — source Open-Meteo, actualisé à chaque visite.
         </p>
 
+        <p role="status" className="sr-only">
+          {state.status === "loading"
+            ? "Chargement des prévisions…"
+            : state.status === "ok"
+              ? "Prévisions chargées."
+              : ""}
+        </p>
+
         {state.status === "loading" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div aria-hidden="true" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {WEATHER_SPOTS.map((s) => (
               <div
                 key={s.dayNumber}
@@ -103,7 +111,7 @@ export default function Weather() {
         )}
 
         {state.status === "error" && (
-          <div className="bg-gold/10 border-l-4 border-gold rounded-r-md px-4 py-3 text-sm text-[#7a4e00] leading-relaxed">
+          <div role="alert" className="bg-gold/10 border-l-4 border-gold rounded-r-md px-4 py-3 text-sm text-[#7a4e00] leading-relaxed">
             Prévisions indisponibles pour le moment — la fenêtre de prévision
             est d&rsquo;environ 16 jours. Consultez les sites spécialisés
             ci-dessous.
@@ -111,56 +119,66 @@ export default function Weather() {
         )}
 
         {state.status === "ok" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {state.forecasts.map((f) => {
               const day = TREK_DAYS.find((d) => d.dayNumber === f.dayNumber)!;
               const wetWarning =
                 (f.precipProb !== null && f.precipProb >= 60) || f.gustsKmh >= 60;
               return (
-                <div
+                <li
                   key={f.dayNumber}
                   className="bg-white rounded-2xl border border-stone-200 p-4 flex flex-col gap-3"
                 >
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-pine">
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-pine">
                       Jour {f.dayNumber} · {day.dateShort}
-                    </p>
-                    <p className="text-xs text-stone-400 mt-0.5">
+                    </h4>
+                    <p className="text-xs text-stone-500 mt-0.5">
                       {f.spotName} · {f.altitudeM} m
                     </p>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-3xl leading-none">{f.emoji}</span>
+                    <span aria-hidden="true" className="text-3xl leading-none">{f.emoji}</span>
                     <div>
                       <p className="text-sm font-semibold text-stone-800">
                         {f.label}
                       </p>
-                      <p className="text-sm text-stone-500 tabular-nums">
+                      <p className="text-sm text-stone-600 tabular-nums">
+                        <span className="sr-only">Maximum </span>
                         <span className="font-bold text-stone-800">{f.tMax}°</span>
-                        {" / "}
+                        <span aria-hidden="true"> / </span>
+                        <span className="sr-only">, minimum </span>
                         {f.tMin}°
                       </p>
                     </div>
                   </div>
 
-                  <div className="space-y-1 text-xs text-stone-500 tabular-nums">
-                    <p className={wetWarning ? "text-coral font-semibold" : ""}>
-                      💧 {f.precipMm} mm
-                      {f.precipProb !== null && ` · ${f.precipProb}%`}
+                  <div className="space-y-1 text-xs text-stone-600 tabular-nums">
+                    <p className={wetWarning ? "text-coral-deep font-semibold" : ""}>
+                      <span aria-hidden="true">💧 </span>
+                      <span className="sr-only">Précipitations : </span>
+                      {f.precipMm} mm
+                      {f.precipProb !== null && (
+                        <>
+                          <span aria-hidden="true"> · </span>
+                          <span className="sr-only">, probabilité </span>
+                          {f.precipProb}%
+                        </>
+                      )}
                     </p>
-                    <p>💨 rafales {f.gustsKmh} km/h</p>
+                    <p><span aria-hidden="true">💨 </span>rafales {f.gustsKmh} km/h</p>
                   </div>
 
                   {wetWarning && (
-                    <p className="text-[11px] font-semibold text-coral bg-coral/10 rounded-md px-2 py-1">
-                      ⚠ Journée à surveiller — partir tôt
+                    <p className="text-[11px] font-semibold text-coral-deep bg-coral/10 rounded-md px-2 py-1">
+                      <span aria-hidden="true">⚠ </span>Journée à surveiller — partir tôt
                     </p>
                   )}
-                </div>
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
       </section>
 
@@ -169,21 +187,26 @@ export default function Weather() {
         <h3 className="font-display text-xl text-stone-700 mb-4">
           Sites spécialisés montagne
         </h3>
-        <div className="grid sm:grid-cols-3 gap-3">
+        <ul className="grid sm:grid-cols-3 gap-3">
           {WEATHER_LINKS.map((l) => (
-            <a
-              key={l.url}
-              href={l.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white rounded-xl border border-stone-200 px-4 py-3 hover:border-pine/40 transition-colors"
-            >
-              <p className="text-sm font-semibold text-stone-800">{l.label} →</p>
-              <p className="text-xs text-stone-400 mt-0.5">{l.note}</p>
-            </a>
+            <li key={l.url} className="flex">
+              <a
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-white rounded-xl border border-stone-200 px-4 py-3 hover:border-pine/40 transition-colors"
+              >
+                <p className="text-sm font-semibold text-stone-800">
+                  {l.label}
+                  <span className="sr-only"> (nouvel onglet)</span>
+                  <span aria-hidden="true"> →</span>
+                </p>
+                <p className="text-xs text-stone-600 mt-0.5">{l.note}</p>
+              </a>
+            </li>
           ))}
-        </div>
-        <p className="text-[11px] text-stone-400 mt-4 leading-relaxed">
+        </ul>
+        <p className="text-[11px] text-stone-600 mt-4 leading-relaxed">
           En juillet, vérifiez la météo chaque soir au refuge et chaque matin
           avant de partir : les orages se forment souvent en début
           d&rsquo;après-midi.

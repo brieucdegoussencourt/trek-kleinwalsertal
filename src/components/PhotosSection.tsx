@@ -62,6 +62,15 @@ export default function PhotosSection() {
   // ── Album (viewers) ────────────────────────────────────────
   const [photos, setPhotos] = useState<PhotoMeta[] | null>(null);
   const [openPhoto, setOpenPhoto] = useState<PhotoMeta | null>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  // Keep the native dialog's open state in sync with `openPhoto`.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (openPhoto && !dialog.open) dialog.showModal();
+    else if (!openPhoto && dialog.open) dialog.close();
+  }, [openPhoto]);
 
   const refresh = useCallback(async () => {
     try {
@@ -188,41 +197,49 @@ export default function PhotosSection() {
     <div className="space-y-6">
       {/* ── Upload panel ─────────────────────────────────────── */}
       <div className="bg-white rounded-2xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
-        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
           Ajouter des photos
-        </p>
+        </h3>
 
         {/* Identity + key — same as the Live tab */}
         <div className="flex flex-wrap items-center gap-3">
-          {LIVE_TRACKERS.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => !uploading && setMe(t.id)}
-              disabled={uploading}
-              className={`flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-semibold transition-colors ${
-                me === t.id
-                  ? "text-white"
-                  : "bg-white text-stone-600 hover:border-stone-300"
-              } ${uploading && me !== t.id ? "opacity-40" : ""}`}
-              style={
-                me === t.id
-                  ? { background: t.color, borderColor: t.color }
-                  : { borderColor: "#e7e5e4" }
-              }
-            >
-              <span
-                className={`h-2.5 w-2.5 rounded-full ${me === t.id ? "bg-white" : ""}`}
-                style={me === t.id ? {} : { background: t.color }}
-              />
-              {t.name}
-            </button>
-          ))}
+          <div role="group" aria-label="Qui ajoute les photos ?" className="flex flex-wrap gap-3">
+            {LIVE_TRACKERS.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => !uploading && setMe(t.id)}
+                disabled={uploading}
+                aria-pressed={me === t.id}
+                className={`flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-semibold transition-colors ${
+                  me === t.id
+                    ? "text-stone-900"
+                    : "bg-white text-stone-600 hover:border-stone-400"
+                } ${uploading && me !== t.id ? "opacity-40" : ""}`}
+                style={
+                  me === t.id
+                    ? { background: `${t.color}26`, borderColor: t.color }
+                    : { borderColor: "#d6d3d1" }
+                }
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-2.5 w-2.5 rounded-full"
+                  style={{ background: t.color }}
+                />
+                {t.name}
+                {me === t.id && <span aria-hidden="true">✓</span>}
+              </button>
+            ))}
+          </div>
 
           <input
             type="password"
             value={recordKey}
             onChange={(e) => setRecordKey(e.target.value)}
             disabled={uploading}
+            aria-label="Clé d'enregistrement"
+            autoComplete="off"
             placeholder="Clé d'enregistrement"
             className="flex-1 min-w-[160px] rounded-xl border-2 border-stone-200 px-3 py-2 text-sm focus:border-pine outline-none disabled:opacity-50"
           />
@@ -236,6 +253,7 @@ export default function PhotosSection() {
             onChange={(e) => setCaption(e.target.value)}
             disabled={uploading}
             maxLength={200}
+            aria-label="Légende (optionnelle)"
             placeholder="Légende (optionnelle)"
             className="flex-1 min-w-[200px] rounded-xl border-2 border-stone-200 px-3 py-2 text-sm focus:border-pine outline-none disabled:opacity-50"
           />
@@ -245,6 +263,8 @@ export default function PhotosSection() {
             type="file"
             accept="image/*"
             multiple
+            tabIndex={-1}
+            aria-hidden="true"
             className="hidden"
             onChange={(e) => {
               if (e.target.files?.length) upload(e.target.files);
@@ -252,23 +272,28 @@ export default function PhotosSection() {
             }}
           />
           <button
+            type="button"
             onClick={pickFiles}
             disabled={uploading}
             className="rounded-xl bg-pine text-white font-bold px-6 py-3 text-sm hover:bg-[#0a5843] transition-colors disabled:opacity-60"
           >
             {uploading
               ? `Envoi ${progress.done}/${progress.total}…`
-              : "📷 Choisir des photos"}
+              : <><span aria-hidden="true">📷 </span>Choisir des photos</>}
           </button>
         </div>
 
+        <p role="status" className="sr-only">
+          {uploading ? `Envoi de la photo ${progress.done + 1} sur ${progress.total}…` : ""}
+        </p>
+
         {error && (
-          <p className="text-sm font-semibold text-coral bg-coral/10 rounded-md px-3 py-2">
+          <p role="alert" className="text-sm font-semibold text-coral-deep bg-coral/10 rounded-md px-3 py-2">
             {error}
           </p>
         )}
 
-        <p className="text-[11px] text-stone-400 leading-relaxed">
+        <p className="text-[11px] text-stone-500 leading-relaxed">
           Depuis votre téléphone : appareil photo ou galerie, plusieurs photos
           à la fois. Les images sont compressées avant l&rsquo;envoi
           (max {MAX_EDGE_PX} px) pour passer même en 4G de montagne. La légende
@@ -279,10 +304,10 @@ export default function PhotosSection() {
       {/* ── Album ────────────────────────────────────────────── */}
       <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-sm">
         <div className="flex items-baseline justify-between px-1 pb-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
             Album du trek
-          </p>
-          <p className="text-[11px] text-stone-400">
+          </h3>
+          <p className="text-[11px] text-stone-500">
             {sorted === null
               ? "Chargement…"
               : sorted.length === 0
@@ -292,105 +317,117 @@ export default function PhotosSection() {
         </div>
 
         {sorted === null ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div aria-hidden="true" className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="aspect-square rounded-xl bg-stone-100 animate-pulse" />
             ))}
           </div>
         ) : sorted.length === 0 ? (
-          <p className="px-1 py-10 text-center text-sm text-stone-400">
+          <p className="px-1 py-10 text-center text-sm text-stone-500">
             Aucune photo pour l&rsquo;instant — elles apparaîtront ici pendant
             le trek.
           </p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {sorted.map((photo) => {
               const tracker = trackerOf(photo.user);
               return (
-                <button
-                  key={photo.id}
-                  onClick={() => setOpenPhoto(photo)}
-                  className="group relative aspect-square overflow-hidden rounded-xl bg-stone-100"
-                >
-                  {/* Blob URLs are remote & dynamic — plain <img> is the right tool */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={photo.url}
-                    alt={photo.caption || "Photo du trek"}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  {tracker && (
-                    <span
-                      className="absolute bottom-1.5 left-1.5 h-2.5 w-2.5 rounded-full ring-2 ring-white/80"
-                      style={{ background: tracker.color }}
-                      title={tracker.name}
+                <li key={photo.id}>
+                  <button
+                    type="button"
+                    onClick={() => setOpenPhoto(photo)}
+                    aria-label={`Agrandir la photo${photo.caption ? ` « ${photo.caption} »` : ""}${tracker ? ` de ${tracker.name}` : ""}`}
+                    className="group block w-full relative aspect-square overflow-hidden rounded-xl bg-stone-100"
+                  >
+                    {/* Blob URLs are remote & dynamic — plain <img> is the right tool */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={photo.url}
+                      alt={photo.caption || "Photo du trek"}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                  )}
-                </button>
+                    {tracker && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute bottom-1.5 left-1.5 h-2.5 w-2.5 rounded-full ring-2 ring-white/80"
+                        style={{ background: tracker.color }}
+                        title={tracker.name}
+                      />
+                    )}
+                  </button>
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
       </div>
 
       {/* ── Lightbox ─────────────────────────────────────────── */}
-      {openPhoto && (
-        <div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90 p-4"
-          onClick={() => setOpenPhoto(null)}
-        >
-          <button
-            onClick={() => setOpenPhoto(null)}
-            aria-label="Fermer"
-            className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 text-white text-xl hover:bg-white/20 transition-colors"
-          >
-            ✕
-          </button>
-
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={openPhoto.url}
-            alt={openPhoto.caption || "Photo du trek"}
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[75vh] max-w-full rounded-xl object-contain"
-          />
-
+      {/* Native modal <dialog>: focus is trapped inside, Escape closes it
+          and focus returns to the thumbnail that opened it. */}
+      <dialog
+        ref={dialogRef}
+        aria-label={openPhoto?.caption || "Photo du trek"}
+        onClose={() => setOpenPhoto(null)}
+        className="m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-black/90"
+      >
+        {openPhoto && (
           <div
-            onClick={(e) => e.stopPropagation()}
-            className="mt-4 flex flex-col items-center gap-2 text-center"
+            className="flex h-full flex-col items-center justify-center p-4"
+            onClick={(e) => e.target === e.currentTarget && setOpenPhoto(null)}
           >
-            {openPhoto.caption && (
-              <p className="max-w-lg text-sm text-white">{openPhoto.caption}</p>
-            )}
-            <p className="flex items-center gap-2 text-xs text-white/60">
-              {trackerOf(openPhoto.user) && (
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ background: trackerOf(openPhoto.user)!.color }}
-                />
+            <button
+              type="button"
+              onClick={() => setOpenPhoto(null)}
+              aria-label="Fermer"
+              className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 text-white text-xl hover:bg-white/20 transition-colors"
+            >
+              <span aria-hidden="true">✕</span>
+            </button>
+
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={openPhoto.url}
+              alt={openPhoto.caption || "Photo du trek"}
+              className="max-h-[75vh] max-w-full rounded-xl object-contain"
+            />
+
+            <div className="mt-4 flex flex-col items-center gap-2 text-center">
+              {openPhoto.caption && (
+                <p className="max-w-lg text-sm text-white">{openPhoto.caption}</p>
               )}
-              {trackerOf(openPhoto.user)?.name ?? openPhoto.user} ·{" "}
-              {new Date(openPhoto.t).toLocaleDateString("fr-BE", {
-                day: "2-digit",
-                month: "2-digit",
-              })}{" "}
-              {new Date(openPhoto.t).toLocaleTimeString("fr-BE", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-            {recordKey && (
-              <button
-                onClick={() => deletePhoto(openPhoto)}
-                className="text-xs text-white/50 underline underline-offset-2 hover:text-coral transition-colors"
-              >
-                Supprimer cette photo
-              </button>
-            )}
+              <p className="flex items-center gap-2 text-xs text-white/75">
+                {trackerOf(openPhoto.user) && (
+                  <span
+                    aria-hidden="true"
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ background: trackerOf(openPhoto.user)!.color }}
+                  />
+                )}
+                {trackerOf(openPhoto.user)?.name ?? openPhoto.user} ·{" "}
+                {new Date(openPhoto.t).toLocaleDateString("fr-BE", {
+                  day: "2-digit",
+                  month: "2-digit",
+                })}{" "}
+                {new Date(openPhoto.t).toLocaleTimeString("fr-BE", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+              {recordKey && (
+                <button
+                  type="button"
+                  onClick={() => deletePhoto(openPhoto)}
+                  className="text-xs text-white/75 underline underline-offset-2 hover:text-coral transition-colors"
+                >
+                  Supprimer cette photo
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </dialog>
     </div>
   );
 }
