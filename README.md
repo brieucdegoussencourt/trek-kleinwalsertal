@@ -15,7 +15,7 @@ A single-page Next.js app that turns structured data files into a full interacti
 - **Live** — record your GPS track from a phone (Brieuc in azure, Sophie in coral, start/stop, shared record key) and let visitors watch both positions update on the map every 15 s, with live/last-seen status chips and a **position journal**: one reverse-geocoded entry per minute (place, time, exact coordinates)
 - **Photos** — a shared trek album: upload photos straight from the phone (camera or gallery, multi-select, optional caption, same record key as Live). Images are downscaled client-side before upload so they pass on mountain 4G; visitors see the album update as the hike goes on
 - **Summary table** — all 4 days compared side by side
-- **Météo** — live forecast for each stage at its high point, altitude-adjusted (Open-Meteo), with storm/wind warnings and links to specialist mountain weather sites
+- **Météo** — live forecast for today and the next three days, one card per stage at its high point, altitude-adjusted (Open-Meteo), with storm/wind warnings and links to specialist mountain weather sites
 - **Sécurité** — tap-to-call emergency numbers (140 / 144 / 112) and mountain safety tips adapted from the official Vorarlberg Tourismus guidance
 - **Checklist** — gear to pack, with tick-off checkboxes
 

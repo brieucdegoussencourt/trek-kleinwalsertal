@@ -17,7 +17,7 @@ import {
   Wind,
   type LucideIcon,
 } from "lucide-react";
-import { TREK_DAYS, WEATHER_SPOTS, WEATHER_LINKS } from "@/data/trek";
+import { WEATHER_SPOTS, WEATHER_LINKS } from "@/data/trek";
 
 // ─── WMO weather codes → icon + French label ───────────────
 
@@ -34,8 +34,21 @@ function wmoInfo(code: number): { icon: LucideIcon; label: string } {
   return { icon: CloudLightning, label: "Orage" };
 }
 
+// "2026-10-01" → "Jeu. 1 oct." — same style as the day cards.
+const dateFormat = new Intl.DateTimeFormat("fr-FR", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
+function formatDate(iso: string): string {
+  const s = dateFormat.format(new Date(`${iso}T12:00:00Z`));
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 interface DayForecast {
   dayNumber: number;
+  dateLabel: string;
   spotName: string;
   altitudeM: number;
   icon: LucideIcon;
@@ -59,12 +72,12 @@ export default function Weather() {
     const lats = WEATHER_SPOTS.map((s) => s.coord[0]).join(",");
     const lons = WEATHER_SPOTS.map((s) => s.coord[1]).join(",");
     const eles = WEATHER_SPOTS.map((s) => s.altitudeM).join(",");
-    const start = WEATHER_SPOTS[0].dateIso;
-    const end = WEATHER_SPOTS[WEATHER_SPOTS.length - 1].dateIso;
+    // Rolling window: card N shows today + N-1 days (Vienna time), so the
+    // tab stays useful before, during and after the trek.
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&elevation=${eles}` +
       `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_gusts_10m_max` +
-      `&timezone=Europe%2FVienna&start_date=${start}&end_date=${end}`;
+      `&timezone=Europe%2FVienna&forecast_days=${WEATHER_SPOTS.length}`;
 
     fetch(url)
       .then((r) => {
@@ -75,11 +88,12 @@ export default function Weather() {
         const results = Array.isArray(data) ? data : [data];
         const forecasts = WEATHER_SPOTS.map((spot, i) => {
           const daily = results[i]?.daily;
-          const idx = daily?.time?.indexOf(spot.dateIso);
-          if (idx === undefined || idx < 0) throw new Error("date hors fenêtre");
+          const idx = i;
+          if (!daily?.time?.[idx]) throw new Error("prévision manquante");
           const { icon, label } = wmoInfo(daily.weather_code[idx]);
           return {
             dayNumber: spot.dayNumber,
+            dateLabel: formatDate(daily.time[idx]),
             spotName: spot.name,
             altitudeM: spot.altitudeM,
             icon,
@@ -103,8 +117,9 @@ export default function Weather() {
           Prévisions sur le parcours
         </h3>
         <p className="text-sm text-stone-600 mb-5">
-          Au point haut de chaque étape, température ajustée à l&rsquo;altitude
-          — source Open-Meteo, actualisé à chaque visite.
+          Aujourd&rsquo;hui et les trois prochains jours, au point haut de
+          chaque étape, température ajustée à l&rsquo;altitude — source
+          Open-Meteo, actualisé à chaque visite.
         </p>
 
         <p role="status" className="sr-only">
@@ -129,16 +144,14 @@ export default function Weather() {
         {state.status === "error" && (
           <div role="alert" className="flex gap-3 rounded-lg border border-line bg-white px-4 py-3 text-sm text-stone-700 leading-relaxed">
             <TriangleAlert aria-hidden="true" className="size-4 shrink-0 mt-0.5 text-gold-deep" />
-            Prévisions indisponibles pour le moment — la fenêtre de prévision
-            est d&rsquo;environ 16 jours. Consultez les sites spécialisés
-            ci-dessous.
+            Prévisions indisponibles pour le moment. Consultez les sites
+            spécialisés ci-dessous.
           </div>
         )}
 
         {state.status === "ok" && (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {state.forecasts.map((f) => {
-              const day = TREK_DAYS.find((d) => d.dayNumber === f.dayNumber)!;
               const wetWarning =
                 (f.precipProb !== null && f.precipProb >= 60) || f.gustsKmh >= 60;
               return (
@@ -148,7 +161,7 @@ export default function Weather() {
                 >
                   <div>
                     <h4 className="text-xs text-rock">
-                      <span className="font-semibold text-ink">Jour {f.dayNumber}</span> · {day.dateShort}
+                      <span className="font-semibold text-ink">Jour {f.dayNumber}</span> · {f.dateLabel}
                     </h4>
                     <p className="text-xs text-rock mt-0.5">
                       {f.spotName} · {f.altitudeM} m
