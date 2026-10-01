@@ -1,28 +1,44 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  ArrowUpRight,
+  Cloud,
+  CloudDrizzle,
+  CloudFog,
+  CloudLightning,
+  CloudRain,
+  CloudSnow,
+  CloudSun,
+  CloudSunRain,
+  Droplets,
+  Sun,
+  TriangleAlert,
+  Wind,
+  type LucideIcon,
+} from "lucide-react";
 import { TREK_DAYS, WEATHER_SPOTS, WEATHER_LINKS } from "@/data/trek";
 
-// ─── WMO weather codes → emoji + French label ───────────────
+// ─── WMO weather codes → icon + French label ───────────────
 
-function wmoInfo(code: number): { emoji: string; label: string } {
-  if (code === 0)              return { emoji: "☀️", label: "Grand soleil" };
-  if (code <= 2)               return { emoji: "🌤️", label: "Éclaircies" };
-  if (code === 3)              return { emoji: "☁️", label: "Couvert" };
-  if (code <= 48)              return { emoji: "🌫️", label: "Brouillard" };
-  if (code <= 57)              return { emoji: "🌦️", label: "Bruine" };
-  if (code <= 67)              return { emoji: "🌧️", label: "Pluie" };
-  if (code <= 77)              return { emoji: "🌨️", label: "Neige" };
-  if (code <= 82)              return { emoji: "🌦️", label: "Averses" };
-  if (code <= 86)              return { emoji: "🌨️", label: "Averses de neige" };
-  return { emoji: "⛈️", label: "Orage" };
+function wmoInfo(code: number): { icon: LucideIcon; label: string } {
+  if (code === 0)              return { icon: Sun,            label: "Grand soleil" };
+  if (code <= 2)               return { icon: CloudSun,       label: "Éclaircies" };
+  if (code === 3)              return { icon: Cloud,          label: "Couvert" };
+  if (code <= 48)              return { icon: CloudFog,       label: "Brouillard" };
+  if (code <= 57)              return { icon: CloudDrizzle,   label: "Bruine" };
+  if (code <= 67)              return { icon: CloudRain,      label: "Pluie" };
+  if (code <= 77)              return { icon: CloudSnow,      label: "Neige" };
+  if (code <= 82)              return { icon: CloudSunRain,   label: "Averses" };
+  if (code <= 86)              return { icon: CloudSnow,      label: "Averses de neige" };
+  return { icon: CloudLightning, label: "Orage" };
 }
 
 interface DayForecast {
   dayNumber: number;
   spotName: string;
   altitudeM: number;
-  emoji: string;
+  icon: LucideIcon;
   label: string;
   tMax: number;
   tMin: number;
@@ -61,12 +77,12 @@ export default function Weather() {
           const daily = results[i]?.daily;
           const idx = daily?.time?.indexOf(spot.dateIso);
           if (idx === undefined || idx < 0) throw new Error("date hors fenêtre");
-          const { emoji, label } = wmoInfo(daily.weather_code[idx]);
+          const { icon, label } = wmoInfo(daily.weather_code[idx]);
           return {
             dayNumber: spot.dayNumber,
             spotName: spot.name,
             altitudeM: spot.altitudeM,
-            emoji,
+            icon,
             label,
             tMax: Math.round(daily.temperature_2m_max[idx]),
             tMin: Math.round(daily.temperature_2m_min[idx]),
@@ -83,7 +99,7 @@ export default function Weather() {
   return (
     <div className="space-y-10">
       <section>
-        <h3 className="font-display text-xl text-stone-700 mb-1">
+        <h3 className="font-display text-2xl font-medium tracking-tight text-ink mb-1">
           Prévisions sur le parcours
         </h3>
         <p className="text-sm text-stone-600 mb-5">
@@ -104,14 +120,15 @@ export default function Weather() {
             {WEATHER_SPOTS.map((s) => (
               <div
                 key={s.dayNumber}
-                className="h-48 rounded-2xl bg-stone-100 animate-pulse"
+                className="h-48 rounded-xl bg-line/60 animate-pulse"
               />
             ))}
           </div>
         )}
 
         {state.status === "error" && (
-          <div role="alert" className="bg-gold/10 border-l-4 border-gold rounded-r-md px-4 py-3 text-sm text-[#7a4e00] leading-relaxed">
+          <div role="alert" className="flex gap-3 rounded-lg border border-line bg-white px-4 py-3 text-sm text-stone-700 leading-relaxed">
+            <TriangleAlert aria-hidden="true" className="size-4 shrink-0 mt-0.5 text-gold-deep" />
             Prévisions indisponibles pour le moment — la fenêtre de prévision
             est d&rsquo;environ 16 jours. Consultez les sites spécialisés
             ci-dessous.
@@ -127,26 +144,26 @@ export default function Weather() {
               return (
                 <li
                   key={f.dayNumber}
-                  className="bg-white rounded-2xl border border-stone-200 p-4 flex flex-col gap-3"
+                  className="bg-white rounded-xl border border-line p-4 flex flex-col gap-3"
                 >
                   <div>
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-pine">
-                      Jour {f.dayNumber} · {day.dateShort}
+                    <h4 className="text-xs text-rock">
+                      <span className="font-semibold text-ink">Jour {f.dayNumber}</span> · {day.dateShort}
                     </h4>
-                    <p className="text-xs text-stone-500 mt-0.5">
+                    <p className="text-xs text-rock mt-0.5">
                       {f.spotName} · {f.altitudeM} m
                     </p>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span aria-hidden="true" className="text-3xl leading-none">{f.emoji}</span>
+                    <f.icon aria-hidden="true" className="size-8 shrink-0 text-pine" strokeWidth={1.5} />
                     <div>
-                      <p className="text-sm font-semibold text-stone-800">
+                      <p className="text-sm font-medium text-ink">
                         {f.label}
                       </p>
                       <p className="text-sm text-stone-600 tabular-nums">
                         <span className="sr-only">Maximum </span>
-                        <span className="font-bold text-stone-800">{f.tMax}°</span>
+                        <span className="font-semibold text-ink">{f.tMax}°</span>
                         <span aria-hidden="true"> / </span>
                         <span className="sr-only">, minimum </span>
                         {f.tMin}°
@@ -154,9 +171,9 @@ export default function Weather() {
                     </div>
                   </div>
 
-                  <div className="space-y-1 text-xs text-stone-600 tabular-nums">
-                    <p className={wetWarning ? "text-coral-deep font-semibold" : ""}>
-                      <span aria-hidden="true">💧 </span>
+                  <div className="space-y-1 pt-3 border-t border-line text-xs text-stone-600 tabular-nums">
+                    <p className={`flex items-center gap-1.5 ${wetWarning ? "text-coral-deep font-medium" : ""}`}>
+                      <Droplets aria-hidden="true" className="size-3.5" />
                       <span className="sr-only">Précipitations : </span>
                       {f.precipMm} mm
                       {f.precipProb !== null && (
@@ -167,12 +184,12 @@ export default function Weather() {
                         </>
                       )}
                     </p>
-                    <p><span aria-hidden="true">💨 </span>rafales {f.gustsKmh} km/h</p>
+                    <p className="flex items-center gap-1.5"><Wind aria-hidden="true" className="size-3.5" />rafales {f.gustsKmh} km/h</p>
                   </div>
 
                   {wetWarning && (
-                    <p className="text-[11px] font-semibold text-coral-deep bg-coral/10 rounded-md px-2 py-1">
-                      <span aria-hidden="true">⚠ </span>Journée à surveiller — partir tôt
+                    <p className="flex items-center gap-1.5 text-xs font-medium text-coral-deep">
+                      <TriangleAlert aria-hidden="true" className="size-3.5" />Journée à surveiller — partir tôt
                     </p>
                   )}
                 </li>
@@ -184,7 +201,7 @@ export default function Weather() {
 
       {/* Specialist sources */}
       <section>
-        <h3 className="font-display text-xl text-stone-700 mb-4">
+        <h3 className="font-display text-2xl font-medium tracking-tight text-ink mb-4">
           Sites spécialisés montagne
         </h3>
         <ul className="grid sm:grid-cols-3 gap-3">
@@ -194,12 +211,12 @@ export default function Weather() {
                 href={l.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-white rounded-xl border border-stone-200 px-4 py-3 hover:border-pine/40 transition-colors"
+                className="w-full bg-white rounded-xl border border-line px-4 py-3 hover:border-stone-300 transition-colors"
               >
-                <p className="text-sm font-semibold text-stone-800">
+                <p className="flex items-center gap-1 text-sm font-medium text-ink">
                   {l.label}
                   <span className="sr-only"> (nouvel onglet)</span>
-                  <span aria-hidden="true"> →</span>
+                  <ArrowUpRight aria-hidden="true" className="size-3.5 text-rock" />
                 </p>
                 <p className="text-xs text-stone-600 mt-0.5">{l.note}</p>
               </a>

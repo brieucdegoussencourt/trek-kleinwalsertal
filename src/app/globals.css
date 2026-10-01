@@ -1,29 +1,47 @@
 @import "tailwindcss";
 
 /* ── Design tokens ──────────────────────────────────────── */
+/* One primary (forest), warm neutrals, and three muted semantic tones
+   used sparingly: ochre (bonus / caution), clay (warning / difficulty),
+   glacier (info). The `-deep` shades are the text-safe variants
+   (WCAG AA on white and on their own 10 % tint). */
 @theme inline {
-  --color-pine:  #0F6E56;
-  --color-azure: #378ADD;
-  --color-gold:  #EF9F27;
-  --color-coral: #D85A30;
-  --color-rock:  #5F5E5A;
-  --color-snow:  #F1EFE8;
-  /* Darker coral for text and buttons — WCAG AA on white (5.5:1). */
-  --color-coral-deep: #B5451F;
+  --color-pine:        #2E4A3F;
+  --color-pine-dark:   #22382F;
+  --color-moss:        #6B8571;
+  --color-azure:       #4F6F84;
+  --color-azure-deep:  #34505F;
+  --color-gold:        #B4853A;
+  --color-gold-deep:   #775820;
+  --color-coral:       #A4553B;
+  --color-coral-deep:  #8A4430;
+  --color-rock:        #67665F;
+  --color-snow:        #F6F4EF;
+  --color-line:        #E6E1D7;
+  --color-ink:         #1F2421;
 
-  --font-sans:    var(--font-inter),     system-ui, sans-serif;
-  --font-display: var(--font-playfair),  Georgia, "Times New Roman", serif;
+  --font-sans:    var(--font-inter),  system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
 }
 
 /* ── Base ───────────────────────────────────────────────── */
 :root {
-  --background: #F1EFE8;
-  --foreground: #1A1A18;
+  --background: #F6F4EF;
+  --foreground: #1F2421;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Shared eyebrow label: the one place small caps are used. */
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-rock);
 }
 
 /* ── Keyboard focus ─────────────────────────────────────── */
@@ -64,5 +82,5 @@ body {
 /* Tiles still loading show the site's paper tone instead of the
    default harsh grey. */
 .leaflet-container {
-  background: #eae6dc;
+  background: #ECE8DF;
 }

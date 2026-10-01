@@ -13,7 +13,7 @@ interface LiveMapProps {
   now: number;
 }
 
-const FADED = "#9CA3AF";
+const FADED = "#8C8A82";
 
 function isLive(state: TrackerState, now: number): boolean {
   return state.recording && now - state.updatedAt < 120_000;
@@ -120,7 +120,7 @@ export default function LiveMap({ trackers, now }: LiveMapProps) {
       L.marker([last.lat, last.lng], { icon, title: tracker.name })
         .bindPopup(
           `<b>${tracker.name}</b><br>${
-            live ? "🔴 En direct" : `Vu il y a ${seenMin} min`
+            live ? "En direct" : `Vu il y a ${seenMin} min`
           }${last.alt ? `<br>${Math.round(last.alt)} m` : ""}`,
         )
         .addTo(layer);
@@ -141,7 +141,7 @@ export default function LiveMap({ trackers, now }: LiveMapProps) {
       ref={containerRef}
       role="region"
       aria-label="Carte des positions en direct de Brieuc et Sophie. Le journal des positions ci-dessous en donne la version texte."
-      className="h-[380px] sm:h-[460px] w-full rounded-2xl overflow-hidden z-0"
+      className="h-[380px] sm:h-[460px] w-full rounded-lg overflow-hidden z-0"
     />
   );
 }

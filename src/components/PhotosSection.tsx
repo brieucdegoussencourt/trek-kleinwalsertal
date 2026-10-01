@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Camera, Check, X } from "lucide-react";
 import { LIVE_TRACKERS } from "@/data/trek";
 import type { PhotoMeta } from "@/lib/photoStore";
 
@@ -196,8 +197,8 @@ export default function PhotosSection() {
   return (
     <div className="space-y-6">
       {/* ── Upload panel ─────────────────────────────────────── */}
-      <div className="bg-white rounded-2xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+      <div className="bg-white rounded-xl border border-line p-5 sm:p-6 space-y-4">
+        <h3 className="eyebrow">
           Ajouter des photos
         </h3>
 
@@ -211,15 +212,15 @@ export default function PhotosSection() {
                 onClick={() => !uploading && setMe(t.id)}
                 disabled={uploading}
                 aria-pressed={me === t.id}
-                className={`flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-semibold transition-colors ${
+                className={`flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                   me === t.id
                     ? "text-stone-900"
-                    : "bg-white text-stone-600 hover:border-stone-400"
+                    : "bg-white border-line text-stone-600 hover:border-stone-300"
                 } ${uploading && me !== t.id ? "opacity-40" : ""}`}
                 style={
                   me === t.id
-                    ? { background: `${t.color}26`, borderColor: t.color }
-                    : { borderColor: "#d6d3d1" }
+                    ? { background: `${t.color}14`, borderColor: t.color }
+                    : undefined
                 }
               >
                 <span
@@ -228,7 +229,7 @@ export default function PhotosSection() {
                   style={{ background: t.color }}
                 />
                 {t.name}
-                {me === t.id && <span aria-hidden="true">✓</span>}
+                {me === t.id && <Check aria-hidden="true" className="size-4" />}
               </button>
             ))}
           </div>
@@ -241,7 +242,7 @@ export default function PhotosSection() {
             aria-label="Clé d'enregistrement"
             autoComplete="off"
             placeholder="Clé d'enregistrement"
-            className="flex-1 min-w-[160px] rounded-xl border-2 border-stone-200 px-3 py-2 text-sm focus:border-pine outline-none disabled:opacity-50"
+            className="flex-1 min-w-[160px] rounded-lg border border-line bg-white px-3 py-2.5 text-sm focus:border-pine focus:ring-3 focus:ring-pine/10 outline-none disabled:opacity-50"
           />
         </div>
 
@@ -255,7 +256,7 @@ export default function PhotosSection() {
             maxLength={200}
             aria-label="Légende (optionnelle)"
             placeholder="Légende (optionnelle)"
-            className="flex-1 min-w-[200px] rounded-xl border-2 border-stone-200 px-3 py-2 text-sm focus:border-pine outline-none disabled:opacity-50"
+            className="flex-1 min-w-[200px] rounded-lg border border-line bg-white px-3 py-2.5 text-sm focus:border-pine focus:ring-3 focus:ring-pine/10 outline-none disabled:opacity-50"
           />
 
           <input
@@ -275,11 +276,11 @@ export default function PhotosSection() {
             type="button"
             onClick={pickFiles}
             disabled={uploading}
-            className="rounded-xl bg-pine text-white font-bold px-6 py-3 text-sm hover:bg-[#0a5843] transition-colors disabled:opacity-60"
+            className="rounded-lg bg-pine text-white font-medium px-5 py-2.5 text-sm inline-flex items-center gap-2 hover:bg-pine-dark transition-colors disabled:opacity-60"
           >
             {uploading
               ? `Envoi ${progress.done}/${progress.total}…`
-              : <><span aria-hidden="true">📷 </span>Choisir des photos</>}
+              : <><Camera aria-hidden="true" className="size-4" />Choisir des photos</>}
           </button>
         </div>
 
@@ -288,12 +289,12 @@ export default function PhotosSection() {
         </p>
 
         {error && (
-          <p role="alert" className="text-sm font-semibold text-coral-deep bg-coral/10 rounded-md px-3 py-2">
+          <p role="alert" className="text-sm font-medium text-coral-deep bg-coral/8 border border-coral/20 rounded-lg px-3 py-2">
             {error}
           </p>
         )}
 
-        <p className="text-[11px] text-stone-500 leading-relaxed">
+        <p className="text-xs text-rock leading-relaxed">
           Depuis votre téléphone : appareil photo ou galerie, plusieurs photos
           à la fois. Les images sont compressées avant l&rsquo;envoi
           (max {MAX_EDGE_PX} px) pour passer même en 4G de montagne. La légende
@@ -302,12 +303,12 @@ export default function PhotosSection() {
       </div>
 
       {/* ── Album ────────────────────────────────────────────── */}
-      <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-sm">
+      <div className="bg-white rounded-xl border border-line p-3 sm:p-4">
         <div className="flex items-baseline justify-between px-1 pb-3">
-          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+          <h3 className="eyebrow">
             Album du trek
           </h3>
-          <p className="text-[11px] text-stone-500">
+          <p className="text-xs text-rock">
             {sorted === null
               ? "Chargement…"
               : sorted.length === 0
@@ -319,7 +320,7 @@ export default function PhotosSection() {
         {sorted === null ? (
           <div aria-hidden="true" className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="aspect-square rounded-xl bg-stone-100 animate-pulse" />
+              <div key={i} className="aspect-square rounded-xl bg-line/60 animate-pulse" />
             ))}
           </div>
         ) : sorted.length === 0 ? (
@@ -337,7 +338,7 @@ export default function PhotosSection() {
                     type="button"
                     onClick={() => setOpenPhoto(photo)}
                     aria-label={`Agrandir la photo${photo.caption ? ` « ${photo.caption} »` : ""}${tracker ? ` de ${tracker.name}` : ""}`}
-                    className="group block w-full relative aspect-square overflow-hidden rounded-xl bg-stone-100"
+                    className="group block w-full relative aspect-square overflow-hidden rounded-xl bg-line/60"
                   >
                     {/* Blob URLs are remote & dynamic — plain <img> is the right tool */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -381,9 +382,9 @@ export default function PhotosSection() {
               type="button"
               onClick={() => setOpenPhoto(null)}
               aria-label="Fermer"
-              className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 text-white text-xl hover:bg-white/20 transition-colors"
+              className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
             >
-              <span aria-hidden="true">✕</span>
+              <X aria-hidden="true" className="size-5" />
             </button>
 
             {/* eslint-disable-next-line @next/next/no-img-element */}

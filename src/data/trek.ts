@@ -443,7 +443,7 @@ export interface SafetyTip {
 
 export interface SafetySection {
   title: string;
-  icon: string;
+  icon: "before" | "weather" | "emergency";
   tips: SafetyTip[];
 }
 
@@ -456,7 +456,7 @@ export const EMERGENCY_NUMBERS = [
 export const SAFETY_SECTIONS: SafetySection[] = [
   {
     title: "Avant de partir",
-    icon: "🥾",
+    icon: "before",
     tips: [
       {
         title: "Rythme & acclimatation",
@@ -482,7 +482,7 @@ export const SAFETY_SECTIONS: SafetySection[] = [
   },
   {
     title: "Météo en montagne",
-    icon: "🌦️",
+    icon: "weather",
     tips: [
       {
         title: "Surveillez l'évolution en journée",
@@ -503,7 +503,7 @@ export const SAFETY_SECTIONS: SafetySection[] = [
   },
   {
     title: "En cas d'urgence",
-    icon: "🆘",
+    icon: "emergency",
     tips: [
       {
         title: "Signal de détresse alpin",
@@ -623,6 +623,12 @@ export const VALLEY_CHAPTERS: ValleyChapter[] = [
   },
 ];
 
+/** Hero backdrop — the Widderstein, which the trek skirts on day 3. */
+export const HERO_IMAGE = {
+  src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Gro%C3%9Fer_Kleiner_Widderstein_von_Osten.jpg/1920px-Gro%C3%9Fer_Kleiner_Widderstein_von_Osten.jpg",
+  credit: "Whgler · CC BY-SA 4.0 · Wikimedia Commons",
+} as const;
+
 // ─── Live tracking ───────────────────────────────────────────
 
 export interface LiveTracker {
@@ -632,8 +638,8 @@ export interface LiveTracker {
 }
 
 export const LIVE_TRACKERS: LiveTracker[] = [
-  { id: "brieuc", name: "Brieuc", color: "#378ADD" }, // azure
-  { id: "sophie", name: "Sophie", color: "#D85A30" }, // coral
+  { id: "brieuc", name: "Brieuc", color: "#4F6F84" }, // glacier
+  { id: "sophie", name: "Sophie", color: "#A4553B" }, // clay
 ];
 
 // ─── Geography & access ──────────────────────────────────────
