@@ -1,7 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Trek Kleinwalsertal — twin peaks under a gold sun -->
-  <rect width="64" height="64" rx="14" fill="#2E4A3F"/>
-  <circle cx="46" cy="19" r="7" fill="#C9A15A"/>
-  <path d="M4 54 L22 20 L32 38 L41 25 L60 54 Z" fill="#F6F4EF"/>
-  <path d="M22 20 L27 29 L22 27 L17 29 Z" fill="#2E4A3F" opacity="0.25"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <!-- Trek Kleinwalsertal — the nav bar's mountain (lucide "mountain") on forest green -->
+  <rect width="24" height="24" rx="5.5" fill="#2E4A3F"/>
+  <path d="m8 3 4 8 5-5 5 15H2L8 3z" transform="translate(3 3.25) scale(0.75)" fill="none" stroke="#F6F4EF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
