@@ -12,14 +12,21 @@ A single-page Next.js app that turns structured data files into a full interacti
 - **Overview map** — the whole trek on OpenTopoMap tiles, one colour per day, drawn from real trail geometry. Loads as a clean overview; clicking a trail, its J1–J4 badge, or a day card focuses that day (numbered step waypoints, zoom, recap scroll). Bus and cable-car transfers render as dashed legs
 - **Itinerary** — day cards that expand into full details: step-by-step route, must-sees, bonus tips, warnings, practical info, and accommodation. Day 1 starts on foot from the Hotel Jagdhof; Day 4 loops over the Gottesacker back to a second night at the A-ROSA
 - **La vallée** — the Kleinwalsertal in five illustrated chapters (the enclave, the Walser people, the summits, the Gottesacker karst, the Breitachklamm) with freely-licensed Wikimedia Commons photos and learn-more links
-- **📍 Live** — record your GPS track from a phone (Brieuc in azure, Sophie in coral, start/stop, shared record key) and let visitors watch both positions update on the map every 15 s, with live/last-seen status chips and a **position journal**: one reverse-geocoded entry per minute (place, time, exact coordinates)
-- **📷 Photos** — a shared trek album: upload photos straight from the phone (camera or gallery, multi-select, optional caption, same record key as Live). Images are downscaled client-side before upload so they pass on mountain 4G; visitors see the album update as the hike goes on
+- **Live** — record your GPS track from a phone (Brieuc in azure, Sophie in coral, start/stop, shared record key) and let visitors watch both positions update on the map every 15 s, with live/last-seen status chips and a **position journal**: one reverse-geocoded entry per minute (place, time, exact coordinates)
+- **Photos** — a shared trek album: upload photos straight from the phone (camera or gallery, multi-select, optional caption, same record key as Live). Images are downscaled client-side before upload so they pass on mountain 4G; visitors see the album update as the hike goes on
 - **Summary table** — all 4 days compared side by side
 - **Météo** — live forecast for each stage at its high point, altitude-adjusted (Open-Meteo), with storm/wind warnings and links to specialist mountain weather sites
 - **Sécurité** — tap-to-call emergency numbers (140 / 144 / 112) and mountain safety tips adapted from the official Vorarlberg Tourismus guidance
 - **Checklist** — gear to pack, with tick-off checkboxes
 
 Every tab is deep-linkable (`/#meteo`, `/#securite`…) and the back button walks through tabs.
+
+### Design
+
+- Calm palette: one deep forest primary over warm neutrals, with muted ochre / clay / glacier tones for callouts and difficulty badges
+- [Lucide](https://lucide.dev) line icons throughout — no emoji
+- Hero over a Wikimedia Commons photo of the Widderstein; a brand bar on top and a single sticky tab bar aligned with the content column
+- Favicon and Apple touch icon reuse the brand bar's mountain (white outline on forest green)
 
 ### SEO & accessibility
 
@@ -37,20 +44,21 @@ Every tab is deep-linkable (`/#meteo`, `/#securite`…) and the back button walk
 | ![Day recap — step by step](docs/screenshots/day-detail.png) | ![Météo — live forecast per stage](docs/screenshots/meteo.png) |
 | *Day recap — step-by-step route* | *Météo — altitude-adjusted forecast* |
 | ![La vallée — five illustrated chapters](docs/screenshots/vallee.png) | ![Live — GPS tracking on the valley map](docs/screenshots/live.jpg) |
-| *La vallée — five illustrated chapters* | *📍 Live — GPS tracking for friends & family* |
+| *La vallée — five illustrated chapters* | *Live — GPS tracking for friends & family* |
 | ![Sécurité — emergency numbers and safety tips](docs/screenshots/securite.png) | ![Photos — shared trek album with phone uploads](docs/screenshots/photos.jpg) |
-| *Sécurité — tap-to-call emergency numbers* | *📷 Photos — shared album, uploads from the phone* |
+| *Sécurité — tap-to-call emergency numbers* | *Photos — shared album, uploads from the phone* |
 
 ## Stack
 
 - [Next.js 16](https://nextjs.org) (App Router) — including an API route for the live tracker
 - [Tailwind CSS v4](https://tailwindcss.com)
+- [lucide-react](https://lucide.dev) icons
 - [Leaflet](https://leafletjs.com) + [OpenTopoMap](https://opentopomap.org) tiles
 - [Open-Meteo](https://open-meteo.com) forecast API (no key required)
 - [Upstash Redis](https://upstash.com) (Vercel Marketplace) for live-tracking storage and the photo index — in-memory fallback in local dev
 - [Vercel Blob](https://vercel.com/docs/vercel-blob) for photo storage (`BLOB_READ_WRITE_TOKEN`) — inline data URLs in local dev
 - [Nominatim](https://nominatim.org) reverse geocoding for the position journal
-- [Playfair Display](https://fonts.google.com/specimen/Playfair+Display) + [Inter](https://fonts.google.com/specimen/Inter) via `next/font`
+- [Fraunces](https://fonts.google.com/specimen/Fraunces) + [Inter](https://fonts.google.com/specimen/Inter) via `next/font`
 - TypeScript
 
 ## Data
