@@ -1,3 +1,12 @@
+import {
+  ArrowUpRight,
+  BedDouble,
+  Info,
+  Sparkles,
+  Star,
+  TriangleAlert,
+  type LucideIcon,
+} from "lucide-react";
 import type { TrekDay } from "@/data/trek";
 
 interface DayDetailProps {
@@ -12,30 +21,61 @@ const ACCOM_LABEL: Record<TrekDay["accommodation"]["type"], string> = {
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col-reverse bg-white border border-stone-200 rounded-xl p-4 text-center">
-      <dt className="text-[10px] uppercase tracking-[0.1em] text-stone-500 mt-1">{label}</dt>
-      <dd className="text-[15px] font-bold text-stone-800 tabular-nums">{value}</dd>
+    <div className="flex flex-col-reverse bg-snow rounded-lg px-4 py-3">
+      <dt className="text-xs text-rock mt-0.5">{label}</dt>
+      <dd className="text-lg font-semibold text-ink tabular-nums">{value}</dd>
     </div>
   );
 }
 
-function HighlightItem({
-  icon,
+function HighlightList({
   title,
-  description,
+  icon: Icon,
+  items,
 }: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
+  title: React.ReactNode;
+  icon: LucideIcon;
+  items: { title: string; description: string }[];
 }) {
   return (
-    <li className="flex gap-3">
-      <span aria-hidden="true" className="shrink-0 mt-0.5 leading-none">{icon}</span>
-      <div>
-        <p className="text-sm font-semibold text-stone-800 leading-snug">{title}</p>
-        <p className="text-sm text-stone-600 leading-relaxed mt-0.5">{description}</p>
+    <div>
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-ink mb-3">
+        <Icon aria-hidden="true" className="size-4 text-pine" strokeWidth={1.75} />
+        {title}
+      </h4>
+      <ul className="space-y-3">
+        {items.map((item) => (
+          <li key={item.title} className="pl-6">
+            <p className="text-sm font-medium text-ink leading-snug">{item.title}</p>
+            <p className="text-sm text-stone-600 leading-relaxed mt-0.5">{item.description}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** The single callout style: neutral surface, a toned icon and title. */
+function Callout({
+  tone,
+  icon: Icon,
+  title,
+  children,
+}: {
+  tone: "warning" | "info";
+  icon: LucideIcon;
+  title: string;
+  children: React.ReactNode;
+}) {
+  const color = tone === "warning" ? "text-coral-deep" : "text-azure-deep";
+  return (
+    <div className="flex gap-3 rounded-lg border border-line bg-snow px-4 py-3">
+      <Icon aria-hidden="true" className={`size-4 shrink-0 mt-0.5 ${color}`} strokeWidth={2} />
+      <div className="text-sm leading-relaxed text-stone-700">
+        <p className={`font-semibold mb-0.5 ${color}`}>{title}</p>
+        {children}
       </div>
-    </li>
+    </div>
   );
 }
 
@@ -46,11 +86,11 @@ export default function DayDetail({ day }: DayDetailProps) {
     <div className="detail-in space-y-6">
       {/* Route header */}
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-pine mb-1">
+        <p className="eyebrow mb-2">
           Jour {day.dayNumber} · {day.date}
         </p>
-        <h3 className="font-display text-2xl font-semibold text-stone-800">{day.label}</h3>
-        <p className="text-sm text-stone-500 mt-1">
+        <h3 className="font-display text-2xl sm:text-3xl font-medium tracking-tight text-ink">{day.label}</h3>
+        <p className="text-sm text-rock mt-1.5">
           {stops.map((stop, i) => (
             <span key={i}>
               {i > 0 && (
@@ -75,22 +115,21 @@ export default function DayDetail({ day }: DayDetailProps) {
 
       {/* Warning banner */}
       {day.warning && (
-        <div className="bg-coral/10 border-l-4 border-coral rounded-r-md px-4 py-3 text-[13px] text-[#7a2800] leading-relaxed">
-          <p className="font-bold mb-1 text-xs"><span aria-hidden="true">⚠ </span>Attention</p>
+        <Callout tone="warning" icon={TriangleAlert} title="Attention">
           <p>{day.warning}</p>
-        </div>
+        </Callout>
       )}
 
       {/* Step-by-step itinerary */}
       {day.itinerary && day.itinerary.length > 0 && (
-        <div className="rounded-xl bg-white border border-stone-200 p-4">
-          <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock mb-3">
+        <div>
+          <h4 className="text-sm font-semibold text-ink mb-3">
             Étape par étape
           </h4>
           <ol className="space-y-2.5">
             {day.itinerary.map((step, i) => (
               <li key={i} className="flex gap-3">
-                <span aria-hidden="true" className="shrink-0 flex items-center justify-center w-5 h-5 mt-0.5 rounded-full bg-pine/10 text-pine text-[11px] font-bold tabular-nums">
+                <span aria-hidden="true" className="shrink-0 flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border border-line text-rock text-[11px] font-medium tabular-nums">
                   {i + 1}
                 </span>
                 <p className="text-sm text-stone-700 leading-relaxed">{step}</p>
@@ -101,69 +140,46 @@ export default function DayDetail({ day }: DayDetailProps) {
       )}
 
       {/* 2-column highlights */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        {/* Must see — pine border */}
-        <div className="rounded-xl border-l-4 border-pine bg-pine/5 p-4">
-          <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-pine mb-3">
-            <span lang="en">Must see</span>
-          </h4>
-          <ul className="space-y-3">
-            {day.mustSee.map((item) => (
-              <HighlightItem
-                key={item.title}
-                icon={<span className="text-pine text-sm">★</span>}
-                title={item.title}
-                description={item.description}
-              />
-            ))}
-          </ul>
-        </div>
-
-        {/* Bonus tips — amber border */}
-        <div className="rounded-xl border-l-4 border-gold bg-gold/5 p-4">
-          <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#7a4e00] mb-3">
-            Si vous avez le temps…
-          </h4>
-          <ul className="space-y-3">
-            {day.bonusTips.map((item) => (
-              <HighlightItem
-                key={item.title}
-                icon={<span className="text-gold text-sm font-bold">→</span>}
-                title={item.title}
-                description={item.description}
-              />
-            ))}
-          </ul>
-        </div>
+      <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 border-t border-line pt-6">
+        <HighlightList
+          title={<span lang="en">Must see</span>}
+          icon={Star}
+          items={day.mustSee}
+        />
+        <HighlightList
+          title="Si vous avez le temps…"
+          icon={Sparkles}
+          items={day.bonusTips}
+        />
       </div>
 
-      {/* Practical info banner */}
+      {/* Practical info */}
       {day.practicalInfo && (
-        <div className="bg-azure/10 border-l-4 border-azure rounded-r-md px-4 py-3 text-[13px] text-[#0e2d52] leading-relaxed">
-          <p className="font-bold mb-1 text-xs"><span aria-hidden="true">ℹ </span>Infos pratiques</p>
+        <Callout tone="info" icon={Info} title="Infos pratiques">
           <p>{day.practicalInfo}</p>
-        </div>
+        </Callout>
       )}
 
       {/* Accommodation */}
-      <div className="rounded-xl bg-white border border-stone-200 p-4">
-        <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock mb-3">
+      <div className="rounded-lg border border-line p-4">
+        <h4 className="flex items-center gap-2 text-xs text-rock mb-2">
+          <BedDouble aria-hidden="true" className="size-4" strokeWidth={1.75} />
           Hébergement · {ACCOM_LABEL[day.accommodation.type]}
         </h4>
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-0.5">
-            <p className="font-semibold text-stone-800">{day.accommodation.name}</p>
+            <p className="font-display text-lg font-medium text-ink">{day.accommodation.name}</p>
             {day.accommodation.altitudeM && (
-              <p className="text-sm text-stone-500">{day.accommodation.altitudeM} m d&rsquo;altitude</p>
+              <p className="text-sm text-rock">{day.accommodation.altitudeM} m d&rsquo;altitude</p>
             )}
             {day.accommodation.capacity && (
-              <p className="text-sm text-stone-500">{day.accommodation.capacity}</p>
+              <p className="text-sm text-rock">{day.accommodation.capacity}</p>
             )}
             {day.accommodation.paymentNote && (
               <p className="text-sm font-semibold text-coral-deep mt-1">{day.accommodation.paymentNote}</p>
             )}
             {day.accommodation.priceNote && (
-              <p className="text-sm text-stone-500">{day.accommodation.priceNote}</p>
+              <p className="text-sm text-rock">{day.accommodation.priceNote}</p>
             )}
           </div>
           {day.accommodation.bookingUrl && (
@@ -171,11 +187,11 @@ export default function DayDetail({ day }: DayDetailProps) {
               href={day.accommodation.bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="shrink-0 rounded-lg bg-pine text-white text-xs font-semibold px-3 py-2 hover:bg-[#0a5843] transition-colors whitespace-nowrap"
+              className="shrink-0 inline-flex items-center gap-1 rounded-lg bg-pine text-white text-sm font-medium px-3.5 py-2 hover:bg-pine-dark transition-colors whitespace-nowrap"
             >
               Réserver
               <span className="sr-only"> {day.accommodation.name} (nouvel onglet)</span>
-              <span aria-hidden="true"> →</span>
+              <ArrowUpRight aria-hidden="true" className="size-4" />
             </a>
           )}
         </div>

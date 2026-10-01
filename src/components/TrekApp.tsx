@@ -20,7 +20,7 @@ import Footer from "@/components/Footer";
 const TrekMap = dynamic(() => import("@/components/TrekMap"), {
   ssr: false,
   loading: () => (
-    <div className="h-[380px] sm:h-[460px] w-full rounded-2xl bg-stone-100 animate-pulse" />
+    <div className="h-[380px] sm:h-[460px] w-full rounded-lg bg-stone-100 animate-pulse" />
   ),
 });
 
@@ -69,18 +69,17 @@ export default function TrekApp() {
     window.dispatchEvent(new HashChangeEvent("hashchange"));
   }, []);
 
-  // Top-nav links: switch tab, bring the content into view and move
-  // keyboard focus there so screen-reader users land on the new panel.
-  const navigateTo = useCallback(
+  // Switching tab from further down the page brings the new panel's top
+  // into view instead of leaving the reader mid-way through it.
+  const showTab = useCallback(
     (tab: Tab) => {
       selectTab(tab);
       const content = document.getElementById("content");
-      content?.scrollIntoView({
-        behavior: prefersReducedMotion() ? "auto" : "smooth",
-      });
-      requestAnimationFrame(() =>
-        document.getElementById(`panel-${tab}`)?.focus({ preventScroll: true }),
-      );
+      if (content && content.getBoundingClientRect().top < 0) {
+        content.scrollIntoView({
+          behavior: prefersReducedMotion() ? "auto" : "smooth",
+        });
+      }
     },
     [selectTab],
   );
@@ -96,7 +95,7 @@ export default function TrekApp() {
       : null;
     if (!next) return;
     e.preventDefault();
-    selectTab(next);
+    showTab(next);
     tabRefs.current[next]?.focus();
   }
 
@@ -125,24 +124,20 @@ export default function TrekApp() {
         Aller au contenu
       </a>
 
-      <Nav activeTab={activeTab} onTabChange={navigateTo} />
+      <Nav />
 
       <main>
         <Hero />
 
-        <div
-          id="content"
-          tabIndex={-1}
-          className="max-w-5xl mx-auto px-4 sm:px-6 py-12 scroll-mt-14 outline-none"
-        >
-          {/* ── Tab bar ────────────────────────────────────────── */}
+        {/* ── Tab bar — the site's single, sticky navigation ───── */}
+        <div className="sticky top-0 z-50 bg-snow/90 backdrop-blur-md border-b border-line">
           <div
             role="tablist"
             aria-label="Sections du guide"
             onKeyDown={onTabKeyDown}
-            className="flex border-b border-stone-200 mb-8 overflow-x-auto"
+            className="max-w-5xl mx-auto px-2 sm:px-4 flex overflow-x-auto [scrollbar-width:none]"
           >
-            {TABS.map(({ id, label, emoji }) => (
+            {TABS.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 ref={(el) => {
@@ -153,19 +148,25 @@ export default function TrekApp() {
                 aria-selected={activeTab === id}
                 aria-controls={`panel-${id}`}
                 tabIndex={activeTab === id ? 0 : -1}
-                onClick={() => selectTab(id)}
-                className={`shrink-0 px-4 sm:px-5 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
+                onClick={() => showTab(id)}
+                className={`shrink-0 inline-flex items-center gap-2 px-3 sm:px-4 py-3.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
                   activeTab === id
-                    ? "border-pine text-pine"
-                    : "border-transparent text-stone-600 hover:text-stone-900"
+                    ? "border-pine text-ink"
+                    : "border-transparent text-rock hover:text-ink"
                 }`}
               >
-                {emoji && <span aria-hidden="true">{emoji} </span>}
+                <Icon aria-hidden="true" className="size-4" strokeWidth={1.75} />
                 {label}
               </button>
             ))}
           </div>
+        </div>
 
+        <div
+          id="content"
+          tabIndex={-1}
+          className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12 scroll-mt-12 outline-none"
+        >
           {/* Text-heavy panels are always rendered (just hidden) so their
               content is in the server HTML for search engines. Panels that
               poll APIs or need `window` mount on demand. */}
@@ -173,14 +174,14 @@ export default function TrekApp() {
           {/* ── Itinéraire ─────────────────────────────────────── */}
           <section {...panelProps("itineraire")}>
             <h2 className="sr-only">Itinéraire du trek jour par jour</h2>
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Overview map — whole trip, one colour per day */}
-              <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-sm">
+              <div className="bg-white rounded-xl border border-line p-3 sm:p-4">
                 <div className="flex items-baseline justify-between gap-3 px-1 pb-3">
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+                  <h3 className="eyebrow">
                     Vue d&rsquo;ensemble du trek
                   </h3>
-                  <p className="text-[11px] text-stone-500 text-right">
+                  <p className="text-xs text-rock text-right">
                     Cliquez un tracé pour zoomer sur le jour
                   </p>
                 </div>
@@ -211,7 +212,7 @@ export default function TrekApp() {
                   one is shown (un-hiding restarts the entrance animation). */}
               <div
                 id="day-detail"
-                className="scroll-mt-20 bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 shadow-sm"
+                className="scroll-mt-20 bg-white rounded-xl border border-line p-5 sm:p-8"
               >
                 {TREK_DAYS.map((day) => (
                   <div key={day.dayNumber} hidden={day.dayNumber !== selectedDay}>
