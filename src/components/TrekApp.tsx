@@ -135,7 +135,7 @@ export default function TrekApp() {
             role="tablist"
             aria-label="Sections du guide"
             onKeyDown={onTabKeyDown}
-            className="max-w-5xl mx-auto px-2 sm:px-4 flex overflow-x-auto [scrollbar-width:none]"
+            className="max-w-5xl mx-auto px-4 sm:px-6 flex lg:justify-between overflow-x-auto [scrollbar-width:none]"
           >
             {TABS.map(({ id, label, icon: Icon }) => (
               <button
