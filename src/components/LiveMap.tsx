@@ -139,6 +139,8 @@ export default function LiveMap({ trackers, now }: LiveMapProps) {
   return (
     <div
       ref={containerRef}
+      role="region"
+      aria-label="Carte des positions en direct de Brieuc et Sophie. Le journal des positions ci-dessous en donne la version texte."
       className="h-[380px] sm:h-[460px] w-full rounded-2xl overflow-hidden z-0"
     />
   );

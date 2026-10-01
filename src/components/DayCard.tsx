@@ -23,11 +23,22 @@ function Pill({ bg, text, children }: { bg: string; text: string; children: Reac
   );
 }
 
+/** Route separator: an arrow for the eye, "vers" for screen readers. */
+function Arrow() {
+  return (
+    <>
+      <span aria-hidden="true"> → </span>
+      <span className="sr-only"> vers </span>
+    </>
+  );
+}
+
 export default function DayCard({ day, isActive, onClick }: DayCardProps) {
   const isHard = day.difficulty === "sustained" || day.difficulty === "hard";
 
   return (
     <button
+      type="button"
       onClick={onClick}
       aria-pressed={isActive}
       className={`w-full text-left rounded-xl border-2 bg-white p-4 transition-all duration-200 ${
@@ -42,10 +53,10 @@ export default function DayCard({ day, isActive, onClick }: DayCardProps) {
           <p className={`text-[10px] uppercase tracking-[0.1em] font-bold ${isActive ? "text-pine" : "text-rock"}`}>
             Jour {day.dayNumber}
           </p>
-          <p className="text-xs text-stone-400 mt-0.5">{day.dateShort}</p>
+          <p className="text-xs text-stone-500 mt-0.5">{day.dateShort}</p>
         </div>
         {isActive && (
-          <span className="h-2 w-2 rounded-full bg-pine shrink-0 mt-1" />
+          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-pine shrink-0 mt-1" />
         )}
       </div>
 
@@ -55,10 +66,10 @@ export default function DayCard({ day, isActive, onClick }: DayCardProps) {
       </p>
 
       {/* Route */}
-      <p className="text-xs text-stone-400 mb-3 truncate">
+      <p className="text-xs text-stone-500 mb-3 truncate">
         {day.from}
-        {day.via ? ` → ${day.via}` : ""}
-        {" → "}{day.to}
+        {day.via && <><Arrow />{day.via}</>}
+        <Arrow />{day.to}
       </p>
 
       {/* Pills */}
@@ -67,9 +78,12 @@ export default function DayCard({ day, isActive, onClick }: DayCardProps) {
           {day.stats.distanceKm} km
         </Pill>
         <Pill bg="bg-gold/15" text="text-[#7a4e00]">
-          ↑ {day.stats.elevationGainM} m
+          <span aria-hidden="true">↑ </span>
+          <span className="sr-only">dénivelé positif </span>
+          {day.stats.elevationGainM} m
         </Pill>
         <Pill bg="bg-azure/15" text="text-[#1a4a7a]">
+          <span className="sr-only">durée </span>
           {day.stats.durationMin}–{day.stats.durationMax}
         </Pill>
         {isHard && (

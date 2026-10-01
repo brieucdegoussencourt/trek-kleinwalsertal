@@ -223,17 +223,17 @@ export default function LiveSection() {
       {/* Live map */}
       <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-sm">
         <div className="flex items-baseline justify-between px-1 pb-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
             Position en direct
-          </p>
-          <p className="text-[11px] text-stone-400">
+          </h3>
+          <p className="text-[11px] text-stone-500">
             Actualisé toutes les 15 s
           </p>
         </div>
         {live ? (
           <LiveMap trackers={live.trackers} now={live.now} />
         ) : (
-          <div className="h-[380px] sm:h-[460px] w-full rounded-2xl bg-stone-100 animate-pulse" />
+          <div aria-hidden="true" className="h-[380px] sm:h-[460px] w-full rounded-2xl bg-stone-100 animate-pulse" />
         )}
 
         {/* Status chips */}
@@ -245,7 +245,7 @@ export default function LiveSection() {
             const label = !s || s.track.length === 0
               ? "Aucune trace"
               : isLive
-                ? "🔴 En direct"
+                ? "En direct"
                 : `Vu il y a ${Math.max(1, Math.round((live!.now - s.updatedAt) / 60_000))} min`;
             return (
               <span
@@ -253,10 +253,13 @@ export default function LiveSection() {
                 className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3 py-1 text-xs text-stone-600"
               >
                 <span
+                  aria-hidden="true"
                   className="h-2.5 w-2.5 rounded-full"
                   style={{ background: t.color }}
                 />
-                <b>{t.name}</b> · {label}
+                <b>{t.name}</b> ·{" "}
+                {isLive && <span aria-hidden="true">🔴 </span>}
+                {label}
               </span>
             );
           })}
@@ -265,41 +268,49 @@ export default function LiveSection() {
 
       {/* Recorder */}
       <div className="bg-white rounded-2xl border border-stone-200 p-5 sm:p-6 shadow-sm space-y-4">
-        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
           Enregistrer ma trace
-        </p>
+        </h3>
 
         {/* Identity */}
         <div className="flex flex-wrap items-center gap-3">
-          {LIVE_TRACKERS.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => !recording && setMe(t.id)}
-              disabled={recording}
-              className={`flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-semibold transition-colors ${
-                me === t.id
-                  ? "text-white"
-                  : "bg-white text-stone-600 hover:border-stone-300"
-              } ${recording && me !== t.id ? "opacity-40" : ""}`}
-              style={
-                me === t.id
-                  ? { background: t.color, borderColor: t.color }
-                  : { borderColor: "#e7e5e4" }
-              }
-            >
-              <span
-                className={`h-2.5 w-2.5 rounded-full ${me === t.id ? "bg-white" : ""}`}
-                style={me === t.id ? {} : { background: t.color }}
-              />
-              {t.name}
-            </button>
-          ))}
+          <div role="group" aria-label="Qui enregistre ?" className="flex flex-wrap gap-3">
+            {LIVE_TRACKERS.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => !recording && setMe(t.id)}
+                disabled={recording}
+                aria-pressed={me === t.id}
+                className={`flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-semibold transition-colors ${
+                  me === t.id
+                    ? "text-stone-900"
+                    : "bg-white text-stone-600 hover:border-stone-400"
+                } ${recording && me !== t.id ? "opacity-40" : ""}`}
+                style={
+                  me === t.id
+                    ? { background: `${t.color}26`, borderColor: t.color }
+                    : { borderColor: "#d6d3d1" }
+                }
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-2.5 w-2.5 rounded-full"
+                  style={{ background: t.color }}
+                />
+                {t.name}
+                {me === t.id && <span aria-hidden="true">✓</span>}
+              </button>
+            ))}
+          </div>
 
           <input
             type="password"
             value={recordKey}
             onChange={(e) => setRecordKey(e.target.value)}
             disabled={recording}
+            aria-label="Clé d'enregistrement"
+            autoComplete="off"
             placeholder="Clé d'enregistrement"
             className="flex-1 min-w-[160px] rounded-xl border-2 border-stone-200 px-3 py-2 text-sm focus:border-pine outline-none disabled:opacity-50"
           />
@@ -309,23 +320,26 @@ export default function LiveSection() {
         <div className="flex flex-wrap items-center gap-3">
           {recording ? (
             <button
+              type="button"
               onClick={stop}
-              className="rounded-xl bg-coral text-white font-bold px-6 py-3 text-sm hover:opacity-90 transition-opacity"
+              className="rounded-xl bg-coral-deep text-white font-bold px-6 py-3 text-sm hover:opacity-90 transition-opacity"
             >
-              ■ Arrêter l&rsquo;enregistrement
+              <span aria-hidden="true">■ </span>Arrêter l&rsquo;enregistrement
             </button>
           ) : (
             <button
+              type="button"
               onClick={start}
               className="rounded-xl bg-pine text-white font-bold px-6 py-3 text-sm hover:bg-[#0a5843] transition-colors"
             >
-              ● Démarrer l&rsquo;enregistrement
+              <span aria-hidden="true">● </span>Démarrer l&rsquo;enregistrement
             </button>
           )}
 
           {recording && meTracker && (
             <span className="inline-flex items-center gap-2 text-sm text-stone-600">
               <span
+                aria-hidden="true"
                 className="h-2.5 w-2.5 rounded-full animate-pulse"
                 style={{ background: meTracker.color }}
               />
@@ -335,15 +349,16 @@ export default function LiveSection() {
           )}
 
           {!recording && sentCount > 0 && (
-            <span className="text-sm text-stone-400">
+            <span role="status" className="text-sm text-stone-600">
               Trace envoyée — {sentCount} points.
             </span>
           )}
 
           {!recording && me && (
             <button
+              type="button"
               onClick={clearMine}
-              className="text-xs text-stone-400 underline underline-offset-2 hover:text-coral transition-colors"
+              className="text-xs text-stone-600 underline underline-offset-2 hover:text-coral-deep transition-colors"
             >
               Effacer ma trace
             </button>
@@ -351,12 +366,12 @@ export default function LiveSection() {
         </div>
 
         {error && (
-          <p className="text-sm font-semibold text-coral bg-coral/10 rounded-md px-3 py-2">
+          <p role="alert" className="text-sm font-semibold text-coral-deep bg-coral/10 rounded-md px-3 py-2">
             {error}
           </p>
         )}
 
-        <p className="text-[11px] text-stone-400 leading-relaxed">
+        <p className="text-[11px] text-stone-500 leading-relaxed">
           L&rsquo;enregistrement fonctionne tant que cette page reste ouverte,
           écran allumé (l&rsquo;écran est maintenu éveillé automatiquement si
           possible). La position est publiée sur cette page publique — pensez à
@@ -368,10 +383,10 @@ export default function LiveSection() {
       {/* Position journal */}
       <div className="bg-white rounded-2xl border border-stone-200 p-5 sm:p-6 shadow-sm">
         <div className="flex items-baseline justify-between pb-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-rock">
             Journal des positions
-          </p>
-          <p className="text-[11px] text-stone-400">
+          </h3>
+          <p className="text-[11px] text-stone-500">
             Une entrée par minute d&rsquo;enregistrement
           </p>
         </div>
@@ -385,13 +400,14 @@ export default function LiveSection() {
               <div key={tracker.id} className="min-w-0">
                 <div className="flex items-center gap-2 mb-2">
                   <span
+                    aria-hidden="true"
                     className="h-2.5 w-2.5 rounded-full"
                     style={{ background: tracker.color }}
                   />
-                  <p className="text-sm font-semibold text-stone-800">
+                  <h4 className="text-sm font-semibold text-stone-800">
                     {tracker.name}
-                  </p>
-                  <p className="text-xs text-stone-400">
+                  </h4>
+                  <p className="text-xs text-stone-500">
                     {log.length === 0
                       ? "· aucune position"
                       : `· ${log.length} position${log.length > 1 ? "s" : ""}`}
@@ -399,7 +415,10 @@ export default function LiveSection() {
                 </div>
 
                 {log.length > 0 && (
-                  <ol className="max-h-80 overflow-y-auto divide-y divide-stone-100 rounded-xl border border-stone-100">
+                  <ol
+                    tabIndex={0}
+                    aria-label={`Positions de ${tracker.name}, la plus récente en premier`}
+                    className="max-h-80 overflow-y-auto divide-y divide-stone-100 rounded-xl border border-stone-100">
                     {[...log].reverse().map((entry) => {
                       const d = new Date(entry.t);
                       return (
@@ -414,7 +433,7 @@ export default function LiveSection() {
                                 minute: "2-digit",
                               })}
                             </p>
-                            <p className="text-[10px] text-stone-400 tabular-nums">
+                            <p className="text-[10px] text-stone-500 tabular-nums">
                               {d.toLocaleDateString("fr-BE", {
                                 day: "2-digit",
                                 month: "2-digit",
@@ -425,7 +444,7 @@ export default function LiveSection() {
                             <p className="text-sm text-stone-700 truncate">
                               {entry.place ?? "Position enregistrée"}
                             </p>
-                            <p className="text-[11px] text-stone-400 font-mono tabular-nums">
+                            <p className="text-[11px] text-stone-500 font-mono tabular-nums">
                               {entry.lat.toFixed(5)}, {entry.lng.toFixed(5)}
                             </p>
                           </div>

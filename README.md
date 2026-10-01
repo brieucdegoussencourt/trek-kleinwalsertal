@@ -19,6 +19,15 @@ A single-page Next.js app that turns structured data files into a full interacti
 - **Sécurité** — tap-to-call emergency numbers (140 / 144 / 112) and mountain safety tips adapted from the official Vorarlberg Tourismus guidance
 - **Checklist** — gear to pack, with tick-off checkboxes
 
+Every tab is deep-linkable (`/#meteo`, `/#securite`…) and the back button walks through tabs.
+
+### SEO & accessibility
+
+- Text-heavy tabs (itinerary, all four day details, vallée, récap, sécurité, checklist) are in the server-rendered HTML, just hidden — crawlers see the whole guide
+- Metadata, Open Graph / Twitter card (generated `opengraph-image`), canonical URL, `robots.txt`, `sitemap.xml` (with image entries), web manifest and Apple touch icon — all derived from `VERCEL_PROJECT_PRODUCTION_URL`, see `src/lib/site.ts`
+- schema.org JSON-LD (`src/lib/jsonLd.ts`): the trek as a `TouristTrip` with one geo-tagged sub-trip per day
+- WCAG 2.2 AA: ARIA tabs with arrow-key navigation, skip link, landmarks and heading outline, native checkboxes and modal `<dialog>`, labelled inputs and live regions, AA colour contrast, visible focus, `prefers-reduced-motion` — passes an axe-core audit on every tab
+
 ## Aperçu
 
 |  |  |

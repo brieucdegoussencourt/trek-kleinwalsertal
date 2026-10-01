@@ -182,7 +182,7 @@ export const TREK_DAYS: TrekDay[] = [
     dateShort: "Mer. 22 juil.",
     label: "L'étape reine",
     from: "Fiderepasshütte",
-    to: "Widdersteinütte",
+    to: "Widdersteinhütte",
     stats: {
       distanceKm: 11.6,
       elevationGainM: 890,
@@ -226,7 +226,7 @@ export const TREK_DAYS: TrekDay[] = [
           "À mi-parcours — une Radler bien méritée avec panorama garanti.",
       },
       {
-        title: "Soirée romantique à la Widdersteinütte",
+        title: "Soirée romantique à la Widdersteinhütte",
         description:
           "Dîner sous les étoiles avec la silhouette du Widderstein en toile de fond.",
       },
@@ -234,7 +234,7 @@ export const TREK_DAYS: TrekDay[] = [
     warning:
       "Ne sous-estimez pas cette étape. La progression dans les pierriers est bien plus lente qu'en sentier ordinaire. Départ recommandé avant 7h30. Bâtons de randonnée indispensables. Passages exposés avec mains courantes — bons randonneurs requis.",
     accommodation: {
-      name: "Widdersteinütte",
+      name: "Widdersteinhütte",
       type: "refuge-prive",
       altitudeM: 2009,
       capacity: "Refuge intime et chaleureux",
@@ -246,7 +246,7 @@ export const TREK_DAYS: TrekDay[] = [
     date: "Jeudi 23 juillet",
     dateShort: "Jeu. 23 juil.",
     label: "Descente sauvage + SPA",
-    from: "Widdersteinütte",
+    from: "Widdersteinhütte",
     to: "Hirschegg",
     via: "Baad",
     stats: {
